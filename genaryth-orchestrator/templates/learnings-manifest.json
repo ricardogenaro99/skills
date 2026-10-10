@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project_id": "nombre-del-proyecto",
+  "version": "1.0.0",
+  "updated_at": "YYYY-MM-DDTHH:mm:ssZ",
+  "governance": {
+    "framework": "Genaryth Venture Studio - Protocolo ALF (Agent Learning & Feedback)",
+    "curator": "Genaryth Orchestrator & Ricardo Genaro (Tech Lead)",
+    "storage_mode": "DUAL_TIER (Local Repo .genaryth/learnings.json + Obsidian Layer 3 mistakes.md)"
+  },
+  "heuristics": [
+    {
+      "id": "LRN-001",
+      "timestamp": "YYYY-MM-DDTHH:mm:ssZ",
+      "hilo": "hilo_X_area",
+      "area": "frontend | backend | devops | qa | data | architecture",
+      "ticket": "TICKET-ID",
+      "author": "subagent-X",
+      "context": "Breve contexto del componente, librería o entorno donde ocurrió la fricción",
+      "finding": "Descripción precisa del tropezón, comportamiento no documentado o limitación encontrada",
+      "root_cause": "Causa raíz técnica",
+      "rule": "Regla inmutable o heurística preventiva que futuros subagentes DEBEN seguir",
+      "scope": "PROJECT_LOCAL"
+    }
+  ]
+}

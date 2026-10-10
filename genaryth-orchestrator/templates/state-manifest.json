@@ -123,6 +123,7 @@
     }
   },
   "commit_log": [],
+  "learnings_manifest": ".genaryth/learnings.json",
   "active_subagents": [],
   "change_log": [
     {
