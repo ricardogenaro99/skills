@@ -45,11 +45,16 @@ Todo proyecto en Genaryth progresa a través de 5 puertas decisionales secuencia
 ### Resumen de Puertas de Control:
 1. **GATE 1: BUSINESS_REVIEW:** Oportunidad comercial, dolor del cliente y ROI validados en `docs/CONTEXTO_MAESTRO.md` o `docs/BUSINESS_OPPORTUNITY.md`.
 2. **GATE 2: REQUIREMENTS_REVIEW:** Historias de Usuario con sintaxis BDD (*Given-When-Then*), casos límite y SLAs sellados en `docs/PRODUCT_SPEC_V1.md`.
-3. **GATE 3: ARCHITECTURE_REVIEW:** Clean Architecture, esquemas relacionales (DER), contratos OpenAPI 3.1 SSOT (`docs/openapi.json`), ADRs y Threat Modeling OWASP.
+3. **GATE 3: ARCHITECTURE_REVIEW:** Clean Architecture, **Selección Justificada del Tech Stack (RFC de Stack: NestJS vs Express vs FastAPI vs Go, Next.js vs Angular vs React, AWS vs GCP vs Azure vs Firebase)**, esquemas relacionales (DER) o NoSQL, contratos OpenAPI 3.1 SSOT (`docs/openapi.json`), ADRs y Threat Modeling OWASP.
 4. **GATE 4: PLAN_REVIEW:** Desglose granular de tareas con códigos trazables (`BE-XX`, `FED-XX`, `OPS-XX`, `QA-XX`) y alcance autorizado (`authorized_scope`) en `docs/SPRINT_BOARD.md`.
 5. **GATE 5: ACCEPTANCE_REVIEW:** Evidencias verificables de tests unitarios (100% pasando), suites E2E Playwright, auditorías de accesibilidad (a11y) y Core Web Vitals (< 1.5s).
 
+> [!NOTE]
+> **SELECCIÓN ADAPTATIVA DEL TECH STACK:**
+> Genaryth opera como un Venture Studio y Consultora Enterprise: el stack tecnológico **NO es un dogma rígido ni un molde único**. Se calibra y aprueba en **Gate 3** según los requerimientos del producto, time-to-market, integraciones corporativas y presupuesto FinOps. Una vez aprobado por Ricardo Genaro, el bloque `tech_stack` en `.genaryth/state.json` parametriza dinámicamente los linters, compiladores, comandos de test y rutas autorizadas en los Subagent Briefing Contracts.
+
 ---
+
 
 ## ⚡ 3. Patrón de Orquestación Dual (Dual-Track Orchestration)
 

@@ -4,7 +4,29 @@
 
 ---
 
+## 🌐 0. Filosofía Multi-Stack: Principios Agnósticos & Selección por Requerimiento
+
+En **Genaryth Venture Studio**, el stack tecnológico **NO es un dogma rígido**, sino una **decisión deliberada de arquitectura (Gate 3)** calibrada según las necesidades del producto, el presupuesto FinOps, el time-to-market y las restricciones del cliente:
+
+| Capa Tecnológica | Arquetipo de Referencia Actual | Alternativas Oficiales por Requerimiento | Criterio de Selección (Gate 2 / Gate 3) |
+| :--- | :--- | :--- | :--- |
+| **Backend Core** | **NestJS** (Modular / Clean Arch) | • **Express / Fastify** (Node)<br>• **FastAPI / Django** (Python)<br>• **Go** (Gin / Chi)<br>• **Firebase Functions** | NestJS para microservicios enterprise complejos; Express/Fastify para microservicios ultra-ligeros; FastAPI para IA y datos; Firebase para MVPs y prototipado rápido. |
+| **Frontend Web** | **Next.js** (App Router / SSR) | • **Angular** (Enterprise SPAs)<br>• **React SPA** (Vite)<br>• **Astro** (Content / Docs)<br>• **Vue / Nuxt** | Next.js para SaaS y comercio con SEO/LCP crítico; Angular para plataformas corporativas con gobernanza rígida; React SPA para backoffice interno desacoplado. |
+| **Mobile Apps** | **React Native / Expo** | • **Flutter** (Dart)<br>• **Swift / Kotlin** (Nativo) | Expo para apps cross-platform con animaciones a 60 fps; Swift/Kotlin nativo ante requerimientos extremos de telemetría hardware o BLE. |
+| **Persistencia** | **PostgreSQL** (Prisma / Aurora) | • **DynamoDB** (NoSQL)<br>• **Firestore / Firebase**<br>• **MongoDB**<br>• **Redis** (Caché / PubSub) | PostgreSQL para consistencia relacional y transacciones ACID; Firestore/DynamoDB para escalabilidad elástica y modelos sin esquema rígido. |
+| **Cloud & Hosting**| **AWS CDK v2** (TypeScript) | • **GCP** (Cloud Run / BigQuery)<br>• **Firebase** (BaaS / Auth / Rules)<br>• **Azure** (Enterprise Cloud)<br>• **Vercel** (Edge Frontend) | AWS CDK para infraestructura auditable como código; GCP para pipelines de ML y datos; Firebase para apps serverless ágiles; Azure para ecosistemas corporativos Microsoft. |
+
+### 💎 Principios Inmutables que Aplican a Cualquier Stack:
+Sin importar si el proyecto se construye en NestJS, Express, Angular, FastAPI, Firebase o AWS/GCP:
+1. **Clean Architecture & Inversión de Dependencias:** El dominio nunca depende de la base de datos ni de frameworks externos.
+2. **Tipado Estricto:** Cero `any` en TypeScript, tipos estáticos en Go, type hints rigurosos en Python.
+3. **Contract-First:** Contratos OpenAPI 3.1 o JSON Schemas sellados antes de programar endpoints o interfaces.
+4. **Quality Gates con Exit Code 0:** Ningún código se commitea sin pasar la suite de verificación local (`pnpm test`, `ng test`, `pytest`, etc.).
+
+---
+
 ## 🏛️ 1. Arquitectura Hexagonal y Clean Architecture (Backend)
+
 
 En todo microservicio o backend (NestJS, Node, Python):
 
