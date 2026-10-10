@@ -85,12 +85,37 @@ Como Orquestador, tú **no resuelves todas las especialidades en un solo hilo sa
 
 | Hilo | Nombre del Hilo | Prefijos | Scope de Directorio | Quality Gate Requerido | Subagente Recomendado / Tier |
 | :---: | :--- | :--- | :--- | :--- | :--- |
-| **1** | **Product & Strategy** | `BIZ-XX`<br>`HU-XX`<br>`DOC-XX` | `docs/`<br>`*.md` | `markdownlint`<br>Link check | `subagent-process` / `subagent-po`<br>⚡ *Tier Medium (Flash)* |
+| **1** | **Product & Strategy** | `BIZ-XX`<br>`HU-XX`<br>`DOC-XX` | `docs/`<br>`*.md` | `markdownlint`<br>Link check | `subagent-po` / `subagent-process` / `subagent-docs`<br>⚡ *Tier Medium* / 🔍 *Tier Low* |
 | **2** | **Backend & Architecture** | `BE-XX`<br>`SSOT-XX` | `apps/api/`<br>`packages/common/` | `pnpm --filter api test`<br>`pnpm --filter api build`<br>`tsc --noEmit` | `subagent-backend` / `subagent-architect`<br>⚡ *Tier Medium* / 🧠 *Tier High* |
-| **3** | **DevOps, Cloud & CI/CD** | `OPS-XX`<br>`INF-XX` | `apps/api/infrastructure/`<br>`infra/`<br>`.github/` | `cdk synth`<br>`pnpm lint`<br>`docker compose config` | `subagent-devops`<br>🔍 *Tier Low (Flash)* |
+| **3** | **DevOps, Cloud & CI/CD** | `OPS-XX`<br>`INF-XX` | `apps/api/infrastructure/`<br>`infra/`<br>`.github/` | `cdk synth`<br>`pnpm lint`<br>`docker compose config` | `subagent-devops` / `subagent-sre`<br>🔍 *Tier Low (Flash)* |
 | **4** | **QA, Testing & Performance** | `QA-XX` | `apps/*/test/`<br>`apps/*/e2e/`<br>`tests/` | `pnpm test`<br>`npx playwright test` | `subagent-qa`<br>🔍 *Tier Low (Flash-Lite / Flash)* |
-| **5** | **Frontend & UX** | `FED-XX`<br>`FE-XX` | `apps/web/` | `pnpm --filter web build`<br>`pnpm --filter web lint` | `subagent-frontend`<br>🔍 *Tier Low (Flash)* |
+| **5** | **Frontend & UX** | `FED-XX`<br>`FE-XX`<br>`MOB-XX` | `apps/web/`<br>`apps/mobile/` | `pnpm --filter web build`<br>`pnpm --filter web lint` | `subagent-frontend` / `subagent-uiux` / `subagent-mobile`<br>🔍 *Tier Low* / ⚡ *Tier Medium* |
 | **6** | **Data, AI & Automations** | `DATA-XX`<br>`N8N-XX`<br>`EVT-XX` | `workflows/`<br>`packages/events/`<br>`apps/worker/` | Validación JSON Schema<br>Tests de integración | `subagent-automation` / `subagent-data-ai`<br>🔍 *Tier Low* / ⚡ *Tier Medium* |
+
+---
+
+### 🏛️ Catálogo Completo de Subagentes Especializados (Por Tier de Razonamiento)
+
+#### 🧠 Tier High — Thinking: High (Gemini 3.8 Flash)
+1. **[`subagent-architect`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-architect.md):** Solutions & Software Architect. Diseña Clean/Hexagonal Architecture, DER relacional/NoSQL, especificación OpenAPI 3.1 SSOT y ADRs.
+2. **[`subagent-secops`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-secops.md):** Application Security & Compliance Engineer. Threat modeling, auditoría OWASP Top 10, sanitización de credenciales y enmascaramiento PII.
+
+#### ⚡ Tier Medium — Thinking: Medium (Gemini 3.8 Flash)
+3. **[`subagent-backend`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-backend.md):** Senior Backend Engineer. Implementación NestJS/Node, transacciones ACID con Prisma, repositorios desacoplados y pruebas Jest.
+4. **[`subagent-process`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-process.md):** Business Process Analyst. Mapeo As-Is / To-Be, diagramas Mermaid y optimización de flujos operativos sin automatizar el caos.
+5. **[`subagent-data-ai`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-data-ai.md):** AI Engine & Data Platform Engineer. Pipelines RAG, embeddings vectoriales, prompts estructurados y conexión con LLMs con control de costos.
+6. **[`subagent-uiux`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-uiux.md):** Product Designer & Design Engineer. Sistemas de diseño Clean Tech, Apple Craftsmanship, microinteracciones y estándares Quiet Luxury.
+
+#### 🔍 Tier Low — Thinking: Low / Off (Gemini 3.8 Flash / 3.1 Flash-Lite — 54% FinOps)
+7. **[`subagent-frontend`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-frontend.md):** Senior Frontend Engineer. Next.js App Router, Server Components por defecto, Tailwind CSS y rendimiento móvil (< 80 KB bundle).
+8. **[`subagent-mobile`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-mobile.md):** Mobile App Specialist. React Native y Expo Router, gestos fluidos con Reanimated a 60/120 fps, soporte offline-first y sensores.
+9. **[`subagent-devops`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-devops.md):** Cloud Platform & DevOps Engineer. AWS CDK v2 TypeScript, nomenclatura Secuencial 001, RequestValidators y CI/CD en GitHub Actions.
+10. **[`subagent-sre`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-sre.md):** Site Reliability & Observability Engineer. Alarmas CloudWatch declarativas, logs JSON estructurados, OpenTelemetry y presupuestos de error (SLOs).
+11. **[`subagent-qa`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-qa.md):** QA Automation & Performance Auditor. Suites Playwright E2E móviles/desktop, técnica destructiva `break-ui`, k6 y certificación The Nala SLA.
+12. **[`subagent-automation`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-automation.md):** Automation & Integration Engineer. Workflows n8n vía MCP, webhooks criptográficos con HMAC SHA-256 y dead-letter queues.
+13. **[`subagent-po`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-po.md):** Product Owner & Requirements Engineer. Historias de Usuario BDD (*Given-When-Then*), criterios de aceptación y refinamiento de backlog en `PRODUCT_SPEC_V1.md`.
+14. **[`subagent-docs`](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/subagents/subagent-docs.md):** Technical Documentation & SSOT Engineer. Sincronización viva de `docs/API_CATALOG_V1.md`, `CONTEXTO_MAESTRO.md`, diagramas y memoria Layer 3 en Obsidian.
+
 
 ---
 
