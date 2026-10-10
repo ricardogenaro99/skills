@@ -18,3 +18,7 @@ Auditar y certificar con evidencias duras y verificables que la solución cumple
 
 ## Reglas Inviolables
 * **PROHIBIDO afirmar que una prueba pasó sin haberla ejecutado y sin contar con evidencia verificable.**
+* **Disciplina Git ADR-007:** Tras completar la suite de pruebas automatizadas (Exit Code 0), realizar staging quirúrgico (`git add apps/*/test/ apps/*/e2e/`) y commit semántico local con ticket ID (`test(qa): ... (QA-XX)`).
+* **PROHIBIDO ejecutar `git push`:** La sincronización remota queda reservada al Orchestrator.
+* **Reporte Mandatorio:** Emitir mensaje vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`), evidencia de ejecución de pruebas y estado del ticket.
+

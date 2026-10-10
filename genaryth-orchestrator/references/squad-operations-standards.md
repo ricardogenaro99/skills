@@ -37,18 +37,39 @@
 
 ---
 
-## 🔒 3. Concurrencia Segura y Trabajo Multihilo (Anti-Colisión)
+## 🔒 3. Concurrencia Segura y los 6 Hilos Operativos Oficiales
 
-1. **Monorepos Estructurados con Límites Claros:**
-   - `apps/api/`: Territorio exclusivo de Backend.
-   - `apps/web/`: Territorio exclusivo de Frontend.
-   - `packages/common/`: Territorio compartido de contratos (gobernado por Architect).
-   - `infra/` o `apps/api/infrastructure/`: Territorio exclusivo de DevOps.
-2. **Staging Quirúrgico por Dominio:**
-   - Para permitir que dos agentes o un desarrollador y un agente trabajen al mismo tiempo sin colisionar:
-     - El agente de frontend solo hace `git add apps/web/...`.
-     - El agente de backend solo hace `git add apps/api/...`.
-     - Queda estrictamente prohibido el staging ciego de todo el árbol.
-3. **Mantenimiento Continuo de la Memoria (Obsidian Layer 3):**
-   - Cada hito importante, decisión de arquitectura (ADR) o lección aprendida se persiste inmediatamente en Obsidian (`Agent-Shared/decisions-log.md` y `Agent-Antigravity/daily/`).
-   - Esto garantiza que cualquier nueva sesión de trabajo retome el contexto sin pérdida de conocimiento.
+Genaryth organiza el trabajo concurrente en **6 Hilos Operativos Estándar**, cada uno con su prefijo de ticket, alcance de directorio y suite de verificación:
+
+| Hilo Operativo | Especialidad y Rol | Prefijos de Ticket | Alcance de Rutas Autorizadas | Quality Gate Típico | Convención Commit |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Hilo 1: Product & Business** | CPO & Strategist | `BIZ-XX`, `HU-XX`, `DOC-XX` | `docs/`, `*.md` | `markdownlint`, validación de links | `docs(prd): ... (BIZ-XX)` |
+| **Hilo 2: Backend & Architecture** | Tech Lead Backend / Architect | `BE-XX`, `SSOT-XX` | `apps/api/`, `packages/common/` | `pnpm --filter api test`, `pnpm --filter api build` | `feat(api): ... (BE-XX)`<br>`feat(common): ... (SSOT-XX)` |
+| **Hilo 3: DevOps, Cloud & CI/CD** | Cloud Architect | `OPS-XX`, `INF-XX` | `apps/api/infrastructure/`, `infra/`, `.github/` | `cdk synth`, `pnpm lint`, `docker compose config` | `fix(infra): ... (OPS-XX)`<br>`ci(actions): ... (OPS-XX)` |
+| **Hilo 4: QA & Performance** | QA Automation Specialist | `QA-XX` | `apps/*/test/`, `apps/*/e2e/`, `tests/` | `pnpm test`, `npx playwright test` | `test(qa): ... (QA-XX)` |
+| **Hilo 5: Frontend & UX** | Senior Frontend Engineer | `FED-XX`, `FE-XX` | `apps/web/` | `pnpm --filter web build`, `pnpm --filter web lint` | `feat(web): ... (FED-XX)`<br>`ui(shop): ... (FED-XX)` |
+| **Hilo 6: Data, AI & Automations** | Data & Automation Lead | `DATA-XX`, `N8N-XX`, `EVT-XX` | `workflows/`, `packages/events/`, `apps/worker/` | Validación JSON Schema, `n8n validate` | `feat(n8n): ... (N8N-XX)`<br>`feat(data): ... (DATA-XX)` |
+
+---
+
+## 📜 4. Inyección Obligatoria del Subagent Briefing Contract
+
+Cuando el Orchestrator delega una tarea a un subagente (`invoke_subagent`), **NUNCA envía una instrucción genérica o informal**.
+Debe instanciar obligatoriamente el `Subagent Briefing Contract` (`templates/subagent-briefing-contract.md`) inyectando dinámicamente:
+1. Dominio, rol y postura de consultoría de élite.
+2. Aislamiento estricto de rutas de archivo (Scope Boundary).
+3. Suite exacta de Quality Gate requerida (Exit Code 0).
+4. Reglas de Git ADR-007 (Staging quirúrgico + Commit semántico local in-thread).
+5. Protocolo de retorno estructurado vía `send_message` con SHA Hash.
+
+---
+
+## 🔄 5. Sincronización SSOT en Tiempo Real (Orchestrator)
+
+El Orchestrator es el único responsable de la sincronización consolidada del proyecto:
+1. **Recepción del Reporte:** Al recibir el mensaje de retorno del subagente con el Hash de commit y archivos modificados.
+2. **Actualización de `docs/SPRINT_BOARD.md`:** Marca el ticket como `[x]` e incluye el SHA del commit (`Commit [hash]`).
+3. **Actualización de `.genaryth/state.json`:** Registra la tarea en el hilo correspondiente, el commit hash, el estado del ticket y el timestamp en el change log.
+4. **Sincronización de Memoria (Layer 3 - Obsidian):** Registra el hito en `Agent-Antigravity/working-context.md` y `daily/YYYY-MM-DD.md`.
+5. **Salvaguarda de Push:** El Orchestrator evalúa cuándo consolidar y solicita autorización explícita a Ricardo Genaro para ejecutar `git push` o despliegues productivos.
+

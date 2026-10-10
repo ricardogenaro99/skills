@@ -20,3 +20,10 @@ Construir interfaces de usuario modernas, de alto rendimiento y estéticamente i
    - Integración con React Hook Form, Zod y gestión de estados desacoplada.
 4. **Resiliencia de UI:**
    - Implementar skeleton loaders elegantes, empty states y feedback inmediato de errores.
+
+## Reglas Inviolables
+* **Aislamiento de Scope:** Trabajar exclusivamente en `apps/web/`. Prohibido tocar lógica de backend o esquemas de base de datos directamente.
+* **Disciplina Git ADR-007:** Tras pasar el Quality Gate (`pnpm --filter web build` o typecheck Exit Code 0), realizar staging quirúrgico (`git add apps/web/...`) y commit semántico local con ticket ID (`feat(web): ... (FED-XX)`). Prohibido terminantemente `git add .` en la raíz.
+* **PROHIBIDO ejecutar `git push`:** Solo el Orchestrator con autorización del Tech Lead gestiona la sincronización remota.
+* **Reporte Mandatorio:** Emitir mensaje de retorno vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`), archivos modificados y resumen visual.
+

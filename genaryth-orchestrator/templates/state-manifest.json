@@ -43,18 +43,63 @@
   },
   "authorized_scope": [],
   "blocked_actions": [
-    "IMPLEMENTATION",
-    "DEPLOYMENT",
-    "DESTRUCTIVE_ACTIONS"
+    "DIRECT_REMOTE_PUSH",
+    "PRODUCTION_DEPLOYMENT_WITHOUT_APPROVAL",
+    "DESTRUCTIVE_DB_MIGRATIONS"
   ],
-  "adrs": [],
+  "adrs": [
+    {
+      "id": "ADR-007",
+      "title": "Git Governance Anti-Chancado & In-Thread Local Semantic Commits",
+      "status": "ACCEPTED"
+    }
+  ],
+  "threads": {
+    "hilo_1_product": {
+      "name": "Product & Business",
+      "scope": ["docs/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    },
+    "hilo_2_backend": {
+      "name": "Backend & Architecture",
+      "scope": ["apps/api/", "packages/common/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    },
+    "hilo_3_devops": {
+      "name": "DevOps, Cloud & CI/CD",
+      "scope": ["apps/api/infrastructure/", "infra/", ".github/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    },
+    "hilo_4_qa": {
+      "name": "QA, Testing & Performance",
+      "scope": ["apps/*/test/", "apps/*/e2e/", "tests/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    },
+    "hilo_5_frontend": {
+      "name": "Frontend & UX",
+      "scope": ["apps/web/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    },
+    "hilo_6_data_automation": {
+      "name": "Data, AI & Automations",
+      "scope": ["workflows/", "packages/events/", "apps/worker/"],
+      "active_ticket": null,
+      "completed_tickets": []
+    }
+  },
+  "commit_log": [],
   "active_subagents": [],
   "change_log": [
     {
       "timestamp": "YYYY-MM-DDTHH:mm:ssZ",
       "author": "orchestrator",
       "action": "PROJECT_INITIALIZED",
-      "description": "Estado del proyecto inicializado bajo marco GASF v2.0."
+      "description": "Estado del proyecto inicializado bajo marco GASF v2.0 y gobernanza ADR-007."
     }
   ]
 }
