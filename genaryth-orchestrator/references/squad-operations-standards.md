@@ -76,7 +76,13 @@ El Orchestrator es el único responsable de la sincronización consolidada del p
 2. **Actualización de `docs/SPRINT_BOARD.md`:** Marca el ticket como `[x]` e incluye el SHA del commit (`Commit [hash]`).
 3. **Actualización de `.genaryth/state.json`:** Registra la tarea en el hilo correspondiente, el commit hash, el estado del ticket y el timestamp en el change log.
 4. **Sincronización de Memoria (Layer 3 - Obsidian):** Registra el hito en `Agent-Antigravity/working-context.md` y `daily/YYYY-MM-DD.md`.
-5. **Salvaguarda de Push:** El Orchestrator evalúa cuándo consolidar y solicita autorización explícita a Ricardo Genaro para ejecutar `git push` o despliegues productivos.
+5. **Salvaguarda de Push & Pre-Push Guard:** El Orchestrator evalúa cuándo consolidar y solicita autorización explícita a Ricardo Genaro para ejecutar `git push` o despliegues productivos.
+   - **Regla de Historial Limpio en Ramas de Integración (Pre-Push Hook):**
+     Antes de que el Orchestrator ejecute `git push origin develop` o `git push origin master`:
+     * El hook `.husky/pre-push` evaluará el recuento de commits: `git rev-list --count origin/<branch>..HEAD`.
+     * Si el recuento es > 1, el hook intercepta interactivamente para consultar al Tech Lead si los commits deben condensarse en un release unitario (`[1] Squash`) o subirse granulares (`[2] Keep granular`).
+
+
 
 ---
 
