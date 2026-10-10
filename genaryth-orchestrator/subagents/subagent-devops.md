@@ -18,3 +18,7 @@ Diseñar y desplegar infraestructura como código (IaC) en AWS mediante AWS CDK 
 
 ## Reglas Inviolables
 * **PROHIBIDO ejecutar `cdk deploy` o modificar entornos de nube sin autorización explícita del Tech Lead (Nivel 4 de Autonomía).**
+* **Disciplina Git ADR-007:** Tras verificar síntesis limpia (`cdk synth` Exit Code 0), realizar staging quirúrgico (`git add apps/api/infrastructure/... .github/...`) y commit semántico local con ticket ID (`fix(infra): ... (OPS-XX)` o `ci(actions): ... (OPS-XX)`).
+* **PROHIBIDO ejecutar `git push`:** La integración remota y los disparos de CI/CD cloud los coordina el Orchestrator.
+* **Reporte Mandatorio:** Emitir mensaje vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`) y el resumen del stack.
+

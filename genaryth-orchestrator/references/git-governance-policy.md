@@ -1,45 +1,106 @@
-# Git Commit & Push Governance Policy (Genaryth Standard)
+# Git Commit & Push Governance Policy (Genaryth Standard — ADR-007)
 
-**Propósito:** Proteger la integridad del repositorio, evitar regresiones accidentales y garantizar que todo cambio tenga el nivel de escrutinio adecuado por parte del Tech Lead.
+**Propósito:** Proteger la integridad del repositorio, garantizar la concurrencia segura entre múltiples hilos de agentes sin pisar código ajeno y eliminar la parálisis operativa mediante la resolución formal de la Paradoja Git Anti-Chancado (ADR-007).
 
 ---
 
-## 🛡️ Matriz de Clasificación de Impacto
+## ⚖️ 1. Resolución de la Paradoja Git Anti-Chancado (ADR-007)
 
-Antes de ejecutar cualquier comando de Git (`git add`, `git commit`, `git push`), el subagente u orquestador DEBE evaluar y clasificar el nivel de impacto del conjunto de cambios:
+### El Problema Previo (La Paradoja)
+Históricamente, prohibir commits locales en cambios clasificados como HIGH IMPACT (lógica de negocio, controladores, DTOs, infraestructura) generaba una **parálisis operativa**:
+1. Los subagentes dejaban archivos modificados *unstaged* en el working tree esperando revisión humana.
+2. Al ejecutarse múltiples hilos en paralelo (Backend, Frontend, QA, DevOps), el working tree sucio provocaba colisiones, mezcla accidental de cambios ajenos o bloqueo total de herramientas de compilación y staging.
+3. El agente se detenía a mitad de la tarea sin cerrar el ciclo técnico verificable.
 
-| Nivel de Impacto | Tipos de Cambios Incluidos | Acciones Git Permitidas | Acciones Git Estrictamente Prohibidas |
+### La Solución Oficial (ADR-007: Compromiso Local Aislado)
+ADR-007 resuelve la paradoja dividiendo la responsabilidad en dos fases complementarias:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 FASE SUBAGENTE (IN-THREAD)                             │
+│  [Aislamiento de Scope] ──> [Quality Gate (Exit Code 0)] ──> [Staging Quirúrgico]       │
+│                                                                        │               │
+│                                                                        ▼               │
+│                                                        [Commit Semántico Local]        │
+│                                                                        │               │
+│                                                                        ▼               │
+│                                                        [send_message con SHA Hash]     │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              FASE ORCHESTRATOR & TECH LEAD                             │
+│  [Validación Cross-Thread] ──> [Sincronización SSOT (state.json & SPRINT_BOARD.md)]    │
+│                                                                        │               │
+│                                                                        ▼               │
+│                       [Salvaguarda de Push: Tech Lead (Ricardo Genaro) HitL]           │
+│                                                                        │               │
+│                                                                        ▼               │
+│                                                        [git push / cdk deploy]         │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🛡️ 2. Reglas Inmutables de Git para Subagentes
+
+### Regla 1: Staging Quirúrgico Obligatorio (Anti-Chancado)
+* **TERMINANTEMENTE PROHIBIDO:** Ejecutar `git add .`, `git add -A` o `git add *` en la raíz del monorepo o proyecto.
+* **EJECUCIÓN EXCLUSIVA:** Todo subagente debe ejecutar `git add` únicamente sobre las rutas explícitas de los archivos que modificó o generó dentro de su alcance autorizado:
+  - Frontend: `git add apps/web/src/components/...`
+  - Backend: `git add apps/api/src/modules/...`
+  - Contratos SSOT: `git add packages/common/src/...`
+  - Infraestructura: `git add apps/api/infrastructure/... .github/...`
+  - QA: `git add apps/web/e2e/... apps/api/test/...`
+
+### Regla 2: Quality Gate Mandatorio (Exit Code 0)
+Antes de ejecutar `git commit`, el subagente **DEBE** correr la suite de verificación técnica del módulo y obtener Exit Code 0 limpio:
+* No se commitea con errores de TypeScript (`tsc --noEmit`).
+* No se commitea con linters rotos (`eslint`).
+* No se commitea con tests fallidos (`jest`, `vitest`, `playwright`).
+
+### Regla 3: Commit Semántico In-Thread
+Una vez que el Quality Gate está en verde (Exit Code 0), el subagente **DEBE realizar el commit semántico local** utilizando Conventional Commits y el código de ticket trazable:
+* `feat(web): implementar panel de control de rescates (FED-12)`
+* `feat(api): endpoint transaccional de órdenes de compra (BE-08)`
+* `feat(common): contratos sellados de webhooks v1 (SSOT-04)`
+* `fix(infra): rutas declarativas y rate limiting en api gateway (OPS-07)`
+* `test(qa): suite e2e de alerta roja en tiempo real (QA-08)`
+* `docs(prd): especificación funcional de suscripciones b2b (BIZ-09)`
+
+### Regla 4: Salvaguarda de Push (Push Safeguard)
+* **PROHIBIDO A TODO SUBAGENTE EJECUTAR `git push`.**
+* Ningún subagente tiene autorización para enviar ramas remotas, forzar push (`--force`), o alterar ramas de producción (`master`, `release`, `develop`).
+* El `git push` y los despliegues a la nube (`cdk deploy`, Vercel deploy) quedan **estrictamente reservados para el Orchestrator** tras la validación cruzada y bajo autorización explícita del Tech Lead (**Ricardo Genaro**).
+
+---
+
+## 📊 3. Matriz de Gobernanza y Alcance Git
+
+| Nivel de Impacto | Tipos de Cambios Incluidos | Acciones Autorizadas al Subagente | Salvaguarda / Aprobación Requerida |
 | :--- | :--- | :--- | :--- |
-| **🟢 LOW IMPACT** | • Correcciones de documentación (`*.md`).<br>• Corrección de tipografías o textos menores.<br>• Ajustes cosméticos y CSS menor aislado que no alteran layouts.<br>• Comentarios en código o actualización de diagramas. | • `git add` selectivo.<br>• `git commit` semántico local.<br>• `git push` a rama de trabajo activa autorizada. | • Modificar archivos fuera del alcance de la tarea.<br>• Forzar push (`--force`). |
-| **🟡 MEDIUM IMPACT** | • Ajustes visuales de UI no disruptivos.<br>• Nuevos casos de prueba unitarios o E2E aislados.<br>• Utilidades puras desacopladas (helpers, formatters).<br>• Actualización menor de dependencias sin breaking changes. | • `git add` selectivo.<br>• `git commit` semántico local ÚNICAMENTE.<br>• Dejar listo el commit para revisión del Tech Lead. | • **PROHIBIDO `git push` a cualquier rama remota.**<br>El push requiere autorización explícita del Tech Lead. |
-| **🔴 HIGH / CRITICAL IMPACT** | • Rediseños de arquitectura o Clean Architecture.<br>• Lógica central de negocio o algoritmos de dominio.<br>• Contratos de API (endpoints, request/response models).<br>• Esquemas de base de datos (Prisma, TypeORM, migraciones SQL).<br>• Autenticación, autorización, tokens o criptografía.<br>• Infraestructura como Código (AWS CDK stacks, IAM roles).<br>• Cambios en variables de entorno o archivos de configuración base. | • **DEJAR EN WORKING DIRECTORY:** Los archivos modificados deben permanecer unstaged / untracked.<br>• Reportar la lista exacta de archivos al Tech Lead. | • **PROHIBIDO `git commit`.**<br>• **PROHIBIDO `git push`.**<br>Ningún subagente puede comprometer cambios críticos sin revisión previa del Tech Lead. |
+| **🟢 LOW IMPACT** | • Correcciones de documentación (`*.md`).<br>• Ajustes cosméticos y CSS menor aislado.<br>• Comentarios y typings menores. | • Staging quirúrgico.<br>• Commit semántico local. | Push gestionado por Orchestrator tras sync SSOT. |
+| **🟡 MEDIUM IMPACT** | • Componentes UI interactivos nuevos.<br>• Suites de pruebas unitarias o E2E.<br>• Helpers, adaptadores y utilidades desacopladas. | • Staging quirúrgico tras Quality Gate (Exit Code 0).<br>• Commit semántico local in-thread con Ticket ID. | Push bloqueado para el subagente. Reportar SHA al Orchestrator. |
+| **🔴 HIGH / CRITICAL IMPACT** | • Lógica de negocio central y transacciones ACID.<br>• Contratos de API (OpenAPI, DTOs compartidos).<br>• Esquemas de base de datos y migraciones SQL.<br>• Infraestructura Cloud (AWS CDK, IAM roles, WAF).<br>• Autenticación, tokens, criptografía (Argon2id, HMAC). | • Staging quirúrgico tras Quality Gate estricto.<br>• Commit semántico local in-thread con Ticket ID.<br>• **PROHIBIDO PUSH O DESPLIEGUE.** | Push y despliegues (`cdk deploy`) requieren confirmación explícita individual de Ricardo Genaro (Nivel 4 de Autonomía). |
 
 ---
 
-## 🚫 Regla de Oro: Git Anti-Chancado (Staging Quirúrgico)
+## 📡 4. Protocolo de Cierre y Retorno vía `send_message`
 
-En proyectos monorepo o multihilo de Genaryth, múltiples agentes y desarrolladores pueden trabajar en simultáneo:
+Al completar su tarea y generar el commit local, el subagente DEBE emitir inmediatamente un mensaje estructurado al Orchestrator:
 
-1. **PROHIBICIÓN TOTAL:**
-   - **TERMINANTEMENTE PROHIBIDO ejecutar `git add .`, `git add -A` o `git add *` en la raíz del monorepo.**
-2. **STAGING QUIRÚRGICO OBLIGATORIO:**
-   - Todo subagente debe ejecutar `git add` **únicamente sobre las rutas explícitas de los archivos que modificó** (ej. `git add apps/web/src/components/PetCard.tsx`).
-   - Esto evita incluir por error archivos temporales, variables `.env`, archivos modificados por otros hilos en paralelo o código unstaged de alto impacto.
+```markdown
+### 🏁 Tarea Completada: [TICKET-ID] — [Título de la Tarea]
+- **Hilo:** Hilo [1..6] ([Nombre del Área])
+- **Commit Hash:** `[git rev-parse --short HEAD]`
+- **Mensaje de Commit:** `[tipo(alcance): descripción (TICKET-ID)]`
+- **Archivos Staged & Committed:**
+  - `[ruta/archivo-1]`
+  - `[ruta/archivo-2]`
+- **Evidencia del Quality Gate:**
+  - Build: ✅ Exit Code 0
+  - Typecheck: ✅ Exit Code 0
+  - Tests: ✅ [X]/[X] tests pasando limpiamente
+- **Estado de Ticket:** LISTO PARA VALIDACIÓN CRUZADA / CI
+```
 
----
-
-## 📋 Protocolo de Ejecución para Subagentes
-
-1. **Pre-Commit Check:**
-   - Verificar `git status` y `git diff --stat`.
-   - Comprobar que solo los archivos propios de la tarea estén en staging.
-   - Si existe al menos UN archivo modificado clasificado como HIGH IMPACT, todo el changeset se trata como HIGH IMPACT.
-2. **Formato Semántico de Commit (Conventional Commits):**
-   - `feat(modulo): descripción clara (TICKET-ID)`
-   - `fix(modulo): descripción de la corrección (TICKET-ID)`
-   - `docs(modulo): actualización documental (TICKET-ID)`
-   - `test(modulo): nuevas pruebas automatizadas (TICKET-ID)`
-   - `refactor(modulo): mejora estructural sin cambio funcional (TICKET-ID)`
-3. **Escalamiento Obligatorio:**
-   - Si un subagente finaliza una tarea de MEDIUM o HIGH IMPACT, debe informar al Orquestador:
-     > *"Archivos preparados localmente. Nivel de impacto: [MEDIUM/HIGH]. Esperando tu revisión manual y autorización para commit/push según la Git Governance Policy."*
