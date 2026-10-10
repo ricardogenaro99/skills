@@ -5,7 +5,37 @@
   "updated_at": "YYYY-MM-DDTHH:mm:ssZ",
   "tech_lead": "Ricardo Genaro",
   "current_state": "DISCOVERY",
+  "tech_stack": {
+    "frontend": {
+      "framework": "Next.js",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "package_manager": "pnpm",
+      "build_command": "pnpm --filter web build",
+      "test_command": "pnpm --filter web test"
+    },
+    "backend": {
+      "framework": "NestJS",
+      "language": "TypeScript",
+      "orm": "Prisma",
+      "package_manager": "pnpm",
+      "build_command": "pnpm --filter api build",
+      "test_command": "pnpm --filter api test"
+    },
+    "database": {
+      "type": "PostgreSQL",
+      "engine": "Aurora Serverless v2",
+      "migration_tool": "prisma migrate dev"
+    },
+    "cloud_infrastructure": {
+      "provider": "AWS",
+      "iac": "AWS CDK v2 TypeScript",
+      "synth_command": "cdk synth",
+      "supported_providers": ["AWS", "GCP", "Azure", "Firebase", "Vercel"]
+    }
+  },
   "gates": {
+
     "gate_1_business": {
       "status": "PENDING",
       "approved_at": null,

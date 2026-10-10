@@ -41,10 +41,12 @@
 * **Subagentes Involucrados:** `subagent-architect`, `subagent-secops`, `subagent-uiux` (Design System).
 * **Entregable Obligatorio:**
   - Especificación de Arquitectura de la Solución (`docs/ARCHITECTURE_SOLUTION.md`).
+  - **Evaluación y Selección Justificada del Tech Stack (RFC de Stack):** Backend (NestJS vs Express vs FastAPI vs Go), Frontend (Next.js vs Angular vs React vs Vue), Persistencia (PostgreSQL vs DynamoDB vs Firestore) y Cloud (AWS vs GCP vs Azure vs Firebase).
   - Catálogo y Contratos de API sellados (`docs/openapi.json` / `docs/API_CATALOG_V1.md`).
   - Modelos de Datos / DER relacional o esquemas NoSQL.
   - Registro de Decisiones de Arquitectura (ADRs) con alternativas evaluadas y pros/contras.
   - Threat Modeling preliminar y matriz de seguridad OWASP.
+
 * **Criterios de Calidad:**
   - Separación de responsabilidades clara (Clean Architecture / Hexagonal).
   - Códigos de error HTTP, autenticación y autorización (RBAC) especificados.
