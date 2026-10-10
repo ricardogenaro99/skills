@@ -1,0 +1,60 @@
+{
+  "project_id": "nombre-proyecto",
+  "project_name": "Nombre del Proyecto",
+  "version": "1.0.0",
+  "updated_at": "YYYY-MM-DDTHH:mm:ssZ",
+  "tech_lead": "Ricardo Genaro",
+  "current_state": "DISCOVERY",
+  "gates": {
+    "gate_1_business": {
+      "status": "PENDING",
+      "approved_at": null,
+      "deliverable": "docs/CONTEXTO_MAESTRO.md",
+      "notes": "Fase de descubrimiento y oportunidad de negocio en curso."
+    },
+    "gate_2_requirements": {
+      "status": "LOCKED",
+      "approved_at": null,
+      "deliverable": "docs/PRODUCT_SPEC_V1.md",
+      "notes": "Bloqueado hasta la aprobación formal de Gate 1."
+    },
+    "gate_3_architecture": {
+      "status": "LOCKED",
+      "approved_at": null,
+      "deliverables": [
+        "docs/ARCHITECTURE_SOLUTION.md",
+        "docs/openapi.json",
+        "docs/API_CATALOG_V1.md"
+      ],
+      "notes": "Bloqueado hasta la aprobación formal de Gate 2."
+    },
+    "gate_4_planning": {
+      "status": "LOCKED",
+      "approved_at": null,
+      "deliverable": "docs/SPRINT_BOARD.md",
+      "notes": "Bloqueado hasta la aprobación formal de Gate 3."
+    },
+    "gate_5_acceptance": {
+      "status": "LOCKED",
+      "approved_at": null,
+      "deliverable": "docs/QA_ACCEPTANCE_REPORT.md",
+      "notes": "Bloqueado hasta la finalización de pruebas de implementación."
+    }
+  },
+  "authorized_scope": [],
+  "blocked_actions": [
+    "IMPLEMENTATION",
+    "DEPLOYMENT",
+    "DESTRUCTIVE_ACTIONS"
+  ],
+  "adrs": [],
+  "active_subagents": [],
+  "change_log": [
+    {
+      "timestamp": "YYYY-MM-DDTHH:mm:ssZ",
+      "author": "orchestrator",
+      "action": "PROJECT_INITIALIZED",
+      "description": "Estado del proyecto inicializado bajo marco GASF v2.0."
+    }
+  ]
+}
