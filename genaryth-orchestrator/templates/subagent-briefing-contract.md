@@ -57,9 +57,17 @@ Antes de preparar o comprometer cualquier cambio, DEBES ejecutar en la terminal 
 > [!WARNING]
 > Si la suite falla (lint, typecheck o tests en rojo), NO intentes comitear. Corrige los errores en tu código hasta obtener salida limpia (Exit Code 0).
 
+## 🧠 5. Lecciones Aprendidas & Heurísticas Previas (Knowledge Base)
+Antes de escribir código o configurar herramientas, internaliza las siguientes heurísticas y errores pasados rescatados de `.genaryth/learnings.json` y de la memoria en Obsidian (`mistakes.md`):
+
+{{PREVIOUS_LEARNINGS_AND_HEURISTICS}}
+
+> [!TIP]
+> Si descubres un comportamiento no documentado, un límite de cloud o una incompatibilidad de librerías, regístralo al finalizar para que futuros subagentes no repitan el tropiezo.
+
 ---
 
-## 🔒 5. Protocolo Git ADR-007 (Staging Quirúrgico & Commit In-Thread)
+## 🔒 6. Protocolo Git ADR-007 (Staging Quirúrgico & Commit In-Thread)
 
 Sigue estrictamente la disciplina Git de Genaryth para prevenir el chancado o sobreescritura de código entre hilos:
 
@@ -81,7 +89,7 @@ Sigue estrictamente la disciplina Git de Genaryth para prevenir el chancado o so
 
 ---
 
-## 📡 6. Protocolo de Cierre y Retorno al Orchestrator
+## 📡 7. Protocolo de Cierre y Retorno al Orchestrator (Debriefing)
 Al completar el commit semántico local con éxito, obtén el hash de commit (`git rev-parse --short HEAD`) y envía un mensaje de retorno al Orchestrator usando la herramienta `send_message`:
 
 ```markdown
@@ -96,6 +104,12 @@ Al completar el commit semántico local con éxito, obtén el hash de commit (`g
   - Tests: ✅ [X]/[X] tests pasando con éxito
 - **Resumen Técnico:** [Breve descripción de las soluciones y decisiones técnicas implementadas]
 - **Estado de Ticket:** COMPLETADO (Listo para sincronización en SPRINT_BOARD.md y state.json)
+
+### 💡 LEARNING & FRICTION LOG (Retrospectiva Técnica del Subagente)
+- **Tropezón / Fricción Detectada:** [Descripción de la dificultad, error raro de linter, timeout o comportamiento no documentado]
+- **Solución Adoptada:** [Cómo se resolvió limpiamente sin parches sucios]
+- **Regla / Heurística Recomendada:** [Instrucción preventiva precisa para que futuros subagentes la adopten]
+- **Ámbito Propuesto:** [PROJECT_LOCAL (.genaryth/learnings.json) | ENTERPRISE_GLOBAL (Obsidian mistakes.md)]
 ```
 ```
 

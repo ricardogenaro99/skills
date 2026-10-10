@@ -5,7 +5,8 @@ description: >
   Coordina agentes especializados (Negocio, Arquitectura, Backend, Frontend, DevOps, QA, SecOps, Automatización)
   bajo la dirección de Ricardo Genaro (Tech Lead & Managing Director). Implementa el Patrón de Orquestación Dual
   (Dual-Track), 5 Puertas Decisionales obligatorias (Gateways), persistencia en .genaryth/state.json, disciplina de
-  Git ADR-007 (Staging Quirúrgico & Commits In-Thread) y contratos inmutables de despacho (Subagent Briefing Contracts).
+  Git ADR-007 (Staging Quirúrgico & Commits In-Thread), contratos inmutables de despacho (Subagent Briefing Contracts)
+  y aprendizaje continuo multiagente con doble persistencia (Protocolo ALF & .genaryth/learnings.json).
   Actívala cuando el usuario diga "inicia el proyecto", "kickoff", "orquesta el equipo", "nuevo requerimiento",
   "estado del proyecto", "analiza el impacto" o ejecute /genaryth-orchestrator.
 ---
@@ -230,7 +231,44 @@ El Orchestrator es el único responsable de mantener la coherencia y trazabilida
 
 ---
 
-## 🔄 9. Protocolo de Gestión del Cambio y Análisis de Impacto
+## 🧠 9. Aprendizaje Continuo Multiagente & Protocolo ALF (Agent Learning & Feedback)
+
+> [!TIP]
+> **SISTEMA DE INTELIGENCIA COMPUESTA (COMPOUND AI SQUAD):**
+> Un squad de élite no comete dos veces el mismo error. Cada vez que un subagente supera una fricción técnica (un límite no documentado de cloud, una incompatibilidad entre librerías, un bug de linter o una corrección de Ricardo Genaro), esa lección **debe ser capturada y persistida inmediatamente** para que ningún otro subagente tropiece en el futuro.
+
+El protocolo **ALF (Agent Learning & Feedback)** opera en 4 fases continuas:
+
+```mermaid
+flowchart LR
+    A["1. PRE-FLIGHT<br>(Orchestrator inyecta Heurísticas de .genaryth/learnings.json & Obsidian)"] --> B["2. IN-FLIGHT<br>(Subagente detecta y documenta Fricción Técnica)"]
+    B --> C["3. DEBRIEFING<br>(Subagente reporta Commit SHA + Learning Log)"]
+    C --> D["4. POST-FLIGHT<br>(Orchestrator cura y persiste en Dual-Tier)"]
+```
+
+### Las 4 Fases del Protocolo ALF:
+1. **Fase 1: Pre-Flight (Inyección de Sabiduría Previa):**
+   - Al despachar al subagente en su *Briefing Contract*, el Orchestrator consulta `.genaryth/learnings.json` y `Agent-Antigravity/mistakes.md`.
+   - Inyecta la sección obligatoria: `## 🧠 5. Lecciones Aprendidas & Heurísticas Previas`. El subagente arranca con el conocimiento acumulado del squad.
+2. **Fase 2: In-Flight (Detección de Fricción):**
+   - El subagente trabaja en su scope. Si detecta un comportamiento anómalo o limitación técnica (ej. Leaflet requiriendo `ssr: false`, WAFv2 rechazando paréntesis, cuotas de políticas Lambda), documenta la causa raíz y cómo lo solucionó limpiamente.
+3. **Fase 3: Debriefing (Reporte Estructurado de Retorno):**
+   - El subagente incluye en su mensaje de retorno el bloque formal:
+     ```markdown
+     ### 💡 LEARNING & FRICTION LOG
+     - Tropezón / Fricción Detectada: [Descripción]
+     - Solución Adoptada: [Solución limpia]
+     - Regla / Heurística Recomendada: [Instrucción preventiva]
+     - Ámbito Propuesto: [PROJECT_LOCAL | ENTERPRISE_GLOBAL]
+     ```
+4. **Fase 4: Post-Flight & Doble Persistencia (Curaduría del Orchestrator):**
+   - El Orchestrator actúa como curador inteligente (filtra typos o ruido irrelevante):
+     - **Ámbito Local del Proyecto (`PROJECT_LOCAL`):** Apenda la heurística a `.genaryth/learnings.json` versionado en Git.
+     - **Ámbito Global / Corporativo (`ENTERPRISE_GLOBAL`):** Apenda el anti-patrón a `Agent-Antigravity/mistakes.md` en Obsidian (Layer 3) y actualiza la bitácora diaria.
+
+---
+
+## 🔄 10. Protocolo de Gestión del Cambio y Análisis de Impacto
 
 Cuando el Tech Lead o el cliente soliciten una modificación durante el ciclo de vida:
 1. **Detener la ejecución operativa:** Suspender temporalmente las tareas en curso.
@@ -243,12 +281,13 @@ Cuando el Tech Lead o el cliente soliciten una modificación durante el ciclo de
 
 ---
 
-## 📚 10. Compendio de Estándares Institucionales de Genaryth
+## 📚 11. Compendio de Estándares Institucionales de Genaryth
 
 Todos los subagentes deben consultar y aplicar con rigor las referencias maestras del marco:
 * [lifecycle-gates.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/lifecycle-gates.md): Especificación de las 5 Puertas Decisionales y Orquestación Dual-Track.
 * [git-governance-policy.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/git-governance-policy.md): Política de Git Governance ADR-007 y Staging Quirúrgico.
-* [squad-operations-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/squad-operations-standards.md): Dinámica operativa del Squad, los 6 Hilos Oficiales y Subagent Briefing Contracts.
+* [squad-operations-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/squad-operations-standards.md): Dinámica operativa del Squad, los 6 Hilos Oficiales, Subagent Briefing Contracts y Aprendizaje Continuo (ALF).
 * [software-engineering-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/software-engineering-standards.md): Clean/Hexagonal Architecture, SOLID, transacciones atómicas ACID, Server Components en Next.js y OpenAPI SSOT.
 * [performance-and-privacy-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/performance-and-privacy-standards.md): The Nala Performance SLA (LCP < 1.5s, bundle < 80 KB), ingesta asíncrona < 150ms, enmascaramiento de PII y Argon2id.
 * [cloud-devops-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/cloud-devops-standards.md): Estándar de Nomenclatura Cloud (Secuencial 001), cuotas Lambda (< 20 KB), RequestValidators, RDS Proxy y CD manual con `workflow_dispatch`.
+

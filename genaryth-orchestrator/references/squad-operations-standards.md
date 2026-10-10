@@ -78,3 +78,17 @@ El Orchestrator es el único responsable de la sincronización consolidada del p
 4. **Sincronización de Memoria (Layer 3 - Obsidian):** Registra el hito en `Agent-Antigravity/working-context.md` y `daily/YYYY-MM-DD.md`.
 5. **Salvaguarda de Push:** El Orchestrator evalúa cuándo consolidar y solicita autorización explícita a Ricardo Genaro para ejecutar `git push` o despliegues productivos.
 
+---
+
+## 🧠 6. Ciclo de Aprendizaje Continuo (Protocolo ALF - Dual-Tier Memory)
+
+Para evitar la amnesia de contexto entre invocaciones y convertir al squad en un Sistema de Inteligencia Compuesta:
+
+1. **Pre-Flight Wisdom:** Antes de despachar, el Orchestrator lee `.genaryth/learnings.json` y Obsidian `mistakes.md` e inyecta en el contrato las heurísticas previas aplicables a la tarea.
+2. **Friction Capture:** Si el subagente encuentra un problema no trivial (bugs de librerías, limitaciones de cloud, advertencias de compilador), documenta la solución limpia adoptada.
+3. **Debriefing Learning Log:** En su reporte de retorno vía `send_message`, el subagente incluye el bloque `### 💡 LEARNING & FRICTION LOG`.
+4. **Curation & Dual Persistence:** El Orchestrator filtra el ruido y persiste:
+   - Heurísticas locales del proyecto $\to$ `.genaryth/learnings.json` (versionado en Git).
+   - Anti-patrones transversales corporativos $\to$ `Agent-Antigravity/mistakes.md` en Obsidian (Layer 3).
+
+
