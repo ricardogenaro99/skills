@@ -83,3 +83,37 @@
   - Cero secretos expuestos y dependencias vulnerables auditadas.
 * **Pregunta de Decisión al Tech Lead:** *¿Se aceptan los entregables y evidencias para autorizar el cierre del incremento o el paso a despliegue en cloud?*
 * **Condición de Bloqueo:** PROHIBIDO realizar despliegues (`cdk deploy`, merge a ramas productivas) si Gate 5 no está en estado `APPROVED`.
+
+---
+
+## ⚡ Orquestación Dual-Track (Dual-Track Governance)
+
+> [!IMPORTANT]
+> **LOS GATEWAYS GOBIERNAN ENTREGABLES, NO PARALIZAN EL SQUAD EN CASCADA LINEAL.**
+> El Orchestrator evalúa las dependencias técnicas de forma desacoplada para mantener un flujo continuo de alto rendimiento:
+
+```mermaid
+flowchart TD
+    subgraph TrackEstrategico["🧭 Track Estratégico (Diseño & Gobernanza)"]
+        direction TB
+        E1["Siguiente Hito: Requerimientos & Riesgos (Gate 2)"] --> E2["subagent-architect & subagent-secops"]
+        E2 --> E3["RFC Formal, OpenAPI SSOT & Threat Model (Gate 3)"]
+        E3 --> E4["Revisión & Aprobación Tech Lead (Ricardo Genaro)"]
+    end
+
+    subgraph TrackOperativo["⚡ Track Operativo (Construcción & Entrega)"]
+        direction TB
+        O1["Hito Actual: Contratos Previamente Aprobados (Gate 3/4)"] --> O2["subagent-frontend / subagent-qa / subagent-backend"]
+        O2 --> O3["Staging Quirúrgico & Commit Local In-Thread (ADR-007)"]
+        O3 --> O4["Quality Gate (Exit Code 0) & Reporte con SHA Hash"]
+    end
+
+    TrackEstrategico -.->|"Desbloquea nuevo alcance (Gate 4)"| TrackOperativo
+    TrackOperativo -->|"Sincronización SSOT en state.json"| Sync["SSOT Consolidado"]
+```
+
+### Reglas Operativas del Dual-Track:
+1. **Track Operativo (Momentum de Entrega):** Si un componente cuenta con contratos OpenAPI y modelos previamente aprobados (e.g. rediseño UI/UX de pantallas en `apps/web/`), el Orchestrator despacha a los especialistas operativos para avanzar sin fricción.
+2. **Track Estratégico (Blindaje de Nuevos Dominios):** En paralelo, si el próximo incremento (e.g. arquitectura de webhooks y EDA en backend o nuevos stacks de CDK) involucra decisiones críticas, el Orchestrator asigna al Architect y SecOps la elaboración del RFC y Threat Modeling.
+3. **Punto de Convergencia:** El Track Estratégico solo se convierte en código operativo cuando Ricardo Genaro otorga el `APPROVED` formal en el Gateway correspondiente.
+

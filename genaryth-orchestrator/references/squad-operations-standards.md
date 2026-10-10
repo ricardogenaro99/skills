@@ -18,6 +18,11 @@
      4. `subagent-qa`: Certifica con pruebas automatizadas.
 3. **Resolución de Contradicciones:**
    - Si el Backend propone un esquema que rompe la interfaz del Frontend, o si DevOps detecta que una librería introduce costos excesivos, el Orquestador NO reconcilia a espaldas del Tech Lead. Presenta el dilema en la plantilla RFC con opciones claras para tu decisión.
+4. **Patrón de Orquestación Dual-Track (Momentum & Gobernanza):**
+   - El Squad opera en dos carriles desacoplados:
+     * **Track Operativo:** Tareas con contratos y requerimientos sellados (e.g. componentes UI en Next.js, tests E2E) avanzan en paralelo a máxima velocidad.
+     * **Track Estratégico:** Nuevas iniciativas o próximos hitos (e.g. arquitectura EDA, nuevas tablas SQL) se analizan previamente con `subagent-architect` y `subagent-secops` para generar el RFC y Threat Model (Gate 3) antes de escribir código operativo.
+
 
 ---
 
