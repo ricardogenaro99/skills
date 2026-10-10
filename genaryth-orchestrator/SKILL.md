@@ -187,7 +187,7 @@ sequenceDiagram
 
 Todo commit o interacción con Git se rige por la política institucional en [git-governance-policy.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/git-governance-policy.md):
 
-### Los 4 Pilares Inmutables de ADR-007:
+### Los 5 Pilares Inmutables de ADR-007:
 1. **Staging Quirúrgico Obligatorio:**
    - 🚫 **PROHIBIDO TAJANTEMENTE:** `git add .`, `git add -A` o `git add *` en la raíz del repositorio.
    - ✅ **Staging Explícito:** Cada subagente únicamente añade las rutas específicas de los archivos modificados dentro de su alcance autorizado:
@@ -208,6 +208,14 @@ Todo commit o interacción con Git se rige por la política institucional en [gi
 4. **Salvaguarda de Push Absoluta (Push Safeguard):**
    - 🚫 **PROHIBIDO A TODO SUBAGENTE EJECUTAR `git push` O COMANDOS DE DESPLIEGUE (`cdk deploy`, Vercel deploy).**
    - El `git push` a ramas remotas y los despliegues productivos quedan **estrictamente reservados para el Orchestrator** tras la consolidación y bajo confirmación explícita del Tech Lead (**Ricardo Genaro** - Nivel 4 de Autonomía).
+5. **Salvaguarda Pre-Push y Unificación Interactiva (Pre-Push Guard):**
+   - Todo repositorio gobernado por Genaryth debe contar con un hook `pre-push` (vía Husky o nativo de Git en `.husky/pre-push` instanciado desde `templates/hooks/pre-push`).
+   - El hook intercepta pushes dirigidos a ramas de integración o producción (`develop`, `master` o `main`).
+   - Si detecta **2 o más commits salientes** hacia el remoto, **DEBE** pausar y solicitar confirmación interactiva al Tech Lead en terminal (`/dev/tty`):
+     - `[1] Unificar (Squash)`: Condensa los commits en uno solo semántico mediante `git reset --soft` al punto remoto base, evitando la contaminación del historial remoto.
+     - `[2] Pushear por separado`: Preserva la granularidad individual si los tickets lo ameritan.
+     - `[3] Abortar`: Cancela el push de inmediato sin tocar el código.
+
 
 ---
 

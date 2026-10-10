@@ -73,6 +73,15 @@ Una vez que el Quality Gate está en verde (Exit Code 0), el subagente **DEBE re
 * Ningún subagente tiene autorización para enviar ramas remotas, forzar push (`--force`), o alterar ramas de producción (`master`, `release`, `develop`).
 * El `git push` y los despliegues a la nube (`cdk deploy`, Vercel deploy) quedan **estrictamente reservados para el Orchestrator** tras la validación cruzada y bajo autorización explícita del Tech Lead (**Ricardo Genaro**).
 
+### Regla 5: Salvaguarda Pre-Push y Unificación Interactiva (Pre-Push Guard)
+* Todo repositorio gobernado por Genaryth debe contar con el hook `.husky/pre-push` (instanciado desde `templates/hooks/pre-push`).
+* Al ejecutar `git push` hacia ramas de integración o producción (`develop`, `master`, `main`):
+  - Si se detectan **2 o más commits salientes acumulados**, el hook pausa la ejecución y abre un menú interactivo en terminal (`/dev/tty`):
+    - `[1] Unificar (Squash)`: Condensa los commits salientes en uno solo semántico mediante `git reset --soft` al punto remoto base, solicitando el mensaje final consolidado para mantener un historial limpio en el remoto.
+    - `[2] Pushear por separado`: Preserva los commits individuales si la granularidad de tickets lo amerita.
+    - `[3] Abortar`: Cancela el push de inmediato sin alterar los archivos de trabajo.
+
+
 ---
 
 ## 📊 3. Matriz de Gobernanza y Alcance Git
