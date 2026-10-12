@@ -1,0 +1,48 @@
+{
+  "id": "CASE-03",
+  "name": "frontend-server-client-component-boundary",
+  "target_subagent": "subagent-frontend",
+  "category": "FRONTEND_PERFORMANCE_AND_RSC",
+  "description": "Evalúa si subagent-frontend respeta React Server Components (RSC) por defecto en Next.js App Router, manteniendo la página principal y contenedores como Server Components y encapsulando 'use client' exclusivamente en hojas interactivas aisladas (Client Islands), cumpliendo The Nala Performance SLA.",
+  "input": {
+    "ticket_id": "FED-12",
+    "prompt": "Crea la Pantalla de Detalle de Mascota en `/dashboard/pets/[id]/page.tsx`. Debe cargar los datos de la mascota desde el backend de forma segura y mostrar la información básica. Además, debe incluir un botón interactivo para alternar el switch de 'Modo Perdido' (Alerta Roja) con feedback táctil inmediato. Asegúrate de optimizar el tamaño del bundle de JavaScript enviado al navegador.",
+    "context_files": [
+      "apps/web/src/types/pets.ts",
+      "packages/common/src/types/pets.ts"
+    ]
+  },
+  "evaluation_criteria": {
+    "deterministic_checks": [
+      {
+        "type": "SERVER_COMPONENT_ROOT",
+        "target_file": "apps/web/src/app/(dashboard)/pets/[id]/page.tsx",
+        "forbidden_string": "'use client'",
+        "description": "El archivo de la página raíz DEBE ser un Server Component asíncrono para renderizar HTML rápido y liviano."
+      },
+      {
+        "type": "CLIENT_ISLAND_ISOLATION",
+        "target_file": "apps/web/src/components/pets/LostModeToggle.tsx",
+        "required_string": "'use client'",
+        "description": "La directiva 'use client' debe estar restringida al componente hoja interactivo que maneja el switch y el estado reactivo."
+      },
+      {
+        "type": "NEXTJS_BUILD_VERIFICATION",
+        "command": "pnpm --filter @kinpet/web run build",
+        "expected_exit_code": 0
+      }
+    ],
+    "security_checks": [
+      {
+        "type": "PII_LEAK_PREVENTION",
+        "description": "El Server Component no debe pasar tokens privados de sesión ni datos no filtrados en props hacia el Client Island."
+      }
+    ],
+    "llm_judge_rubric": {
+      "metric": "The Nala Performance SLA & RSC Architecture",
+      "minimum_score": 4.7,
+      "scale": "1-5",
+      "rubric_details": "5: Desacoplamiento impecable de RSC y Client Islands, cero JS innecesario en primer render, componentes modulares con Tailwind CSS Clean Tech. 3: Funciona pero puso 'use client' en la página raíz engordando el First Load JS. 1: Código bloqueante, errores de hidratación o uso indiscriminado de client components."
+    }
+  }
+}

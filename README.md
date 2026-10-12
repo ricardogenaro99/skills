@@ -24,7 +24,7 @@ npx -y skills add ricardogenaro99/skills --skill genaryth-orchestrator -g -y
 
 | Skill | Comando / Trigger | Descripción y Propósito |
 | :--- | :--- | :--- |
-| **`genaryth-orchestrator`** | `/genaryth-orchestrator` | **Sistema de Dirección y Orquestación Multiagente.** Coordina a un squad de 13 subagentes especializados bajo la dirección del Tech Lead. Implementa 5 Puertas Decisionales obligatorias (Gateways), persistencia en `.genaryth/state.json`, autonomía de 4 niveles y política estricta de Git Governance. |
+| **`genaryth-orchestrator`** | `/genaryth-orchestrator` | **Sistema de Dirección y Orquestación Multiagente (GASF v2.0).** Coordina a un squad de 14 subagentes especializados bajo la dirección del Tech Lead. Implementa 5 Puertas Decisionales obligatorias (Gateways), persistencia en `.genaryth/state.json`, runtime execution harness con sandboxing y policy interceptors, framework de benchmarking tripartito, autonomía de 4 niveles y política estricta de Git Governance. |
 | **`obsidian-memory`** | `/obsidian-memory` | **Protocolo de Memoria Persistente Layer 3.** Conexión y sincronización bi-direccional de contexto a largo plazo con la bóveda de Obsidian en iCloud (`Agent-Shared/` y `Agent-Antigravity/`). |
 | **`entrevistador-procesos`** | `/entrevistador-procesos` | **Mapeo y Diseño de Procesos de Negocio.** Entrevista estructurada para definir workflows, automatizaciones y sistemas antes de codificar. |
 | **`optimizador-prompts`** | `/optimizador-prompts` | **Ingeniería de Prompts y Estructuración.** Transforma ideas desordenadas, notas rápidas y requerimientos informales en directivas de alta precisión para LLMs. |
@@ -37,7 +37,7 @@ npx -y skills add ricardogenaro99/skills --skill genaryth-orchestrator -g -y
 
 ## 🏛️ Destacado: Genaryth Orchestrator (`genaryth-orchestrator`)
 
-El buque insignia de la colección. Implementa el **Genaryth Autonomous Squad Framework (GASF)** para la gestión del ciclo de vida completo del software:
+El buque insignia de la colección. Implementa el **Genaryth Autonomous Squad Framework (GASF v2.0)** para la gestión del ciclo de vida completo del software:
 
 1. **Human-in-the-Loop:** El Tech Lead (Ricardo Genaro) mantiene el control decisional absoluto. La IA asesora y ejecuta, pero no decide a espaldas del liderazgo técnico.
 2. **Las 5 Puertas Decisionales:**
@@ -46,13 +46,23 @@ El buque insignia de la colección. Implementa el **Genaryth Autonomous Squad Fr
    * `GATE 3: ARCHITECTURE_REVIEW` (Clean Architecture, Schemas de BD y contratos OpenAPI 3.1)
    * `GATE 4: PLAN_REVIEW` (Desglose de tareas, estimaciones y alcance autorizado)
    * `GATE 5: ACCEPTANCE_REVIEW` (Pruebas unitarias, Playwright E2E y técnica `break-ui`)
-3. **Squad de 13 Subagentes Especializados:**
+3. **Squad de 14 Subagentes Especializados:**
    * **Thinking High:** Orchestrator Lead, Solutions Architect, AppSec & Compliance.
-   * **Thinking Medium:** Business Process Analyst, Backend Engineer, AI & Data Engineer.
-   * **Thinking Low (FinOps 54%):** Frontend Engineer, Cloud & DevOps, Automation (n8n MCP), Product Owner, SRE & Observability, QA Automation, Tech Writer.
-4. **Git Anti-Chancado & Governance Policy:**
-   * Staging quirúrgico obligatorio (prohibido `git add .` en la raíz).
-   * Matriz de impacto en tres niveles (Low, Medium, High/Critical).
+   * **Thinking Medium:** Business Process Analyst, Backend Engineer, AI & Data Engineer, FinOps Specialist.
+   * **Thinking Low (FinOps Optimization):** Frontend Engineer, Cloud & DevOps, Automation (n8n MCP), Product Owner, SRE & Observability, QA Automation, Tech Writer.
+4. **Agent Execution Harness (Runtime Sandboxing & Guardrails):**
+   * **Context Pruning Engine:** Descarte de ruido contextual e inyección quirúrgica de slices de código.
+   * **Tool Sandbox Matrix:** Permisos declarativos por rol (lectura, mutación de archivos, ejecución terminal).
+   * **Policy Interceptor (`interceptor-rules.json`):** Bloqueo en seco de operaciones prohibidas (`git add .`, push no autorizado, `cdk deploy`, `prisma migrate reset`, eliminaciones masivas).
+   * **State Synchronizer:** Gestión de estado de proyecto y gobernanza en `.genaryth/state.json`.
+5. **Evaluation & Benchmarking Harness (Quality & FinOps Graders):**
+   * **Grader Tripartito:** Determinístico (AST / `tsc` / Jest), Seguridad (SAST / Git Policies) y LLM-as-a-Judge (Clean Code).
+   * **Benchmark Suites Canónicas:** Casos de prueba estandarizados en `evals/benchmark-suites/` para certificar a los subagentes antes de tocar código de producción.
+   * **FinOps & Latency Tracking:** Monitorización de consumo de tokens y ratio costo/efectividad.
+6. **Git Anti-Chancado & Governance Policy (ADR-007 & ADR-010):**
+   * Staging quirúrgico obligatorio archivo por archivo.
+   * Tríada de Gobernanza Universal Multi-Agente mediante Symlinks SSOT (`GEMINI.md` ➔ `CLAUDE.md`, `AGENTS.md`, `.cursorrules`).
+
 
 ---
 

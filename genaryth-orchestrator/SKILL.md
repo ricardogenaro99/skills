@@ -5,8 +5,9 @@ description: >
   Coordina agentes especializados (Negocio, Arquitectura, Backend, Frontend, DevOps, QA, SecOps, Automatización)
   bajo la dirección de Ricardo Genaro (Tech Lead & Managing Director). Implementa el Patrón de Orquestación Dual
   (Dual-Track), 5 Puertas Decisionales obligatorias (Gateways), persistencia en .genaryth/state.json, disciplina de
-  Git ADR-007 (Staging Quirúrgico & Commits In-Thread), contratos inmutables de despacho (Subagent Briefing Contracts)
-  y aprendizaje continuo multiagente con doble persistencia (Protocolo ALF & .genaryth/learnings.json).
+  Git ADR-007 (Staging Quirúrgico & Commits In-Thread), contratos inmutables de despacho (Subagent Briefing Contracts),
+  aprendizaje continuo multiagente (Protocolo ALF), Agent Execution Harness (Runtime Sandboxing & Guardrails)
+  y Evaluation & Benchmarking Harness (Quality & FinOps Graders en GASF v2.0).
   ÚSALA OBLIGATORIAMENTE Y POR DEFECTO en cualquier interacción, tarea, sprint, feature, bugfix, refactor o desarrollo
   dentro de cualquier proyecto o repositorio de Genaryth (reconocible por la presencia de .genaryth/, docs/OPERATING_THREADS.md,
   GEMINI.md, o proyectos como Kinpet, Sprintflow, arquetipos, microservicios, etc.). También actívala cuando el usuario diga
@@ -365,5 +366,29 @@ Todos los subagentes deben consultar y aplicar con rigor las referencias maestra
 * [software-engineering-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/software-engineering-standards.md): Clean/Hexagonal Architecture, SOLID, transacciones atómicas ACID, Server Components en Next.js y OpenAPI SSOT.
 * [performance-and-privacy-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/performance-and-privacy-standards.md): The Nala Performance SLA (LCP < 1.5s, bundle < 80 KB), ingesta asíncrona < 150ms, enmascaramiento de PII y Argon2id.
 * [cloud-devops-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/cloud-devops-standards.md): Estándar de Nomenclatura Cloud (Secuencial 001), cuotas Lambda (< 20 KB), RequestValidators, RDS Proxy y CD manual con `workflow_dispatch`.
+* [harness-spec.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/harness/harness-spec.md): Especificación técnica del Execution Harness (Sandboxing, Context Pruning y Policy Interceptors).
+* [interceptor-rules.json](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/harness/interceptor-rules.json): Matriz declarativa de comandos permitidos, restringidos y prohibidos por rol.
+* [evals-framework.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/evals/evals-framework.md): Marco de evaluación y benchmarking multiagente con evaluadores Determinístico, de Seguridad y LLM-as-a-Judge.
+
+---
+
+## 🛡️ 13. Arquitectura de Harness & Evaluación Continua (GASF v2.0)
+
+Para garantizar la fiabilidad industrial, seguridad de ejecución y eficiencia de costes (FinOps) en proyectos multiagente a escala, el framework incorpora dos subsistemas de control:
+
+### 1. Agent Execution Harness (Runtime Sandboxing & Guardrails)
+- **Context Pruning Engine:** Aislamiento de contexto y descarte de ruido irrelevante para cada subagente. Cada subagente recibe únicamente los slices de documentación y especificación relevantes a su dominio (`apps/`, `packages/`, o `infrastructure/`).
+- **Tool Sandbox Matrix:** Delimitación de herramientas por rol. Subagentes de análisis operan en solo lectura; subagentes de implementación tienen restringido el uso de comandos destructivos o de despliegue.
+- **Policy Interceptor:** Validación pre-ejecución bloqueante. Detiene en seco comandos prohibidos (`git add .`, `git add -A`, `git push` no autorizado, `cdk deploy`, `prisma migrate reset`, eliminaciones masivas no controladas) y exige staging quirúrgico ADR-007.
+- **State Synchronizer:** Persistencia y actualización controlada del estado del proyecto en `.genaryth/state.json`.
+
+### 2. Evaluation & Benchmarking Harness (Quality & FinOps Graders)
+- **Arquitectura Tripartita de Evaluadores:**
+  1. *Deterministic Grader:* AST, verificación de tipos TypeScript (`tsc --noEmit`), suites de pruebas Jest/Vitest y validación de esquemas OpenAPI / JSON Schema.
+  2. *Security & Policy Grader:* Análisis de reglas SAST/Semgrep, chequeo de secretos, cumplimiento de git-antichancado y políticas de infraestructura.
+  3. *LLM-as-a-Judge:* Rúbrica estandarizada de Clean Code, adherencia a Hexagonal Architecture, y justificación técnica objetiva.
+- **Benchmark Suites:** Casos de prueba canónicos versionados en `evals/benchmark-suites/` para certificar las habilidades de los subagentes antes de intervenir en entornos de producción.
+- **FinOps & Latency Tracking:** Monitorización continua del consumo de tokens y tiempo de inferencia para maximizar el ROI de los agentes autónomos.
+
 
 
