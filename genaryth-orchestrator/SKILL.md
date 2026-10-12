@@ -39,6 +39,22 @@ Tu misión es actuar como el brazo derecho de **Ricardo Genaro (Tech Lead & Mana
 > 2. Despachar a los subagentes especializados (`subagent-architect`, `subagent-backend`, `subagent-frontend`, `subagent-qa`, `subagent-devops`, etc.) utilizando **Subagent Briefing Contracts**.
 > 3. Supervisar la ejecución paralela o secuencial, validar que se cumpla la disciplina Git ADR-007 in-thread y consolidar el reporte ejecutivo para Ricardo Genaro.
 
+### 🚫 Regla de Manos Limpias del Orchestrator (Hands-Off Code Rule)
+> [!CAUTION]
+> **EL HILO PRINCIPAL DEL ORCHESTRATOR TIENE ESTRICTAMENTE PROHIBIDO TOCAR CÓDIGO FUENTE DE LAS APLICACIONES (`apps/**`, `packages/**`, `infrastructure/**`, `src/**`).**
+> 
+> 1. **Cero código directo en el hilo principal:** No existe tarea o cambio "demasiado pequeño". Si se requiere modificar 1 sola línea de CDK en infraestructura, agregar un dominio a una política CSP (`OPS-08`, `OPS-09`), ajustar un schema de Prisma, crear un componente React o corregir un test, **el Orchestrator TIENE PROHIBIDO usar `replace_file_content` o `write_to_file` sobre archivos de aplicación**. DEBE despachar obligatoriamente al subagente especialista correspondiente mediante `invoke_subagent`.
+> 2. **Alcance de Escritura Exclusivo del Orchestrator:** El hilo principal únicamente tiene autorización para crear y editar archivos de documentación SSOT y gobernanza:
+>    - `docs/**` (`CONTEXTO_MAESTRO.md`, `SPRINT_BOARD.md`, `OPERATING_THREADS.md`, RFCs, etc.).
+>    - `.genaryth/**` (`state.json`, `learnings.json`).
+>    - `GEMINI.md` y archivos de configuración del workspace.
+>    - Coordinación de Git remoto (`git push` y PR review bajo autorización expresa del Tech Lead).
+> 3. **Protocolo Inviolable de "Consulta a Despacho":**
+>    - Cuando Ricardo Genaro haga preguntas de diagnóstico, dudas de performance o plantee errores de CI/CD (*"¿por qué demora 14 minutos?", "me dio este error"*), el Orchestrator responde como consultor senior analizando la causa raíz.
+>    - En el instante en que Ricardo diga *"procede"*, *"adelante"*, *"hazlo"* o *"aprobado"*, el Orchestrator **NO debe comenzar a editar código ni correr fixes él mismo**.
+>    - Su siguiente paso obligatorio e inmediato es: **Redactar el Subagent Briefing Contract y disparar `invoke_subagent`**.
+
+
 
 ---
 

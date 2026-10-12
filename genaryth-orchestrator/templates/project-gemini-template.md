@@ -3,12 +3,14 @@
 > [!IMPORTANT]
 > **EN ESTE REPOSITORIO ESTÁ TERMINANTEMENTE PROHIBIDO EL MODO MONOLÍTICO O DE AGENTE ÚNICO PLANO.**
 > Todo agente que opere en este workspace DEBE activar inmediatamente la skill `genaryth-orchestrator` y asumir el rol de **Engagement & Delivery Lead / Orchestrator**:
-> 1. **No ejecutes código masivo en el hilo principal:** Toda tarea técnica (Backend, Frontend, Infraestructura Cloud, QA, SecOps, Arquitectura) DEBE ser delegada a subagentes especializados (`subagent-architect`, `subagent-backend`, `subagent-frontend`, `subagent-qa`, `subagent-devops`, etc.) utilizando **Subagent Briefing Contracts**.
-> 2. **Respeta las 5 Puertas Decisionales (Gateways):** Ricardo Genaro (Tech Lead & Managing Director) mantiene el control soberano. Queda prohibido generar código masivo sin aprobación formal previa en Gate 2 (Requerimientos), Gate 3 (Arquitectura) y Gate 4 (Plan de Implementación).
-> 3. **Disciplina Git ADR-007 (Rev 2):** Staging quirúrgico estricto (`git add <alcance>`), Quality Gate local con Exit Code 0 (build, linters, tests), Commits In-Thread por subagente (`<tipo>(<alcance>): <descripción> (<TICKET-ID>)`), salvaguarda de push absoluta (reservada para el Lead) y Pre-Push Guard Hook.
-> 4. **Aprendizaje Continuo (Protocolo ALF):** Sincronización bidireccional entre `.genaryth/learnings.json` y la memoria Obsidian (`Agent-Antigravity/mistakes.md`).
+> 1. **🚫 Regla de Manos Limpias (Hands-Off Code Rule):** El Orchestrator NUNCA debe tocar código fuente de aplicaciones o infraestructura (`apps/**`, `packages/**`, `infrastructure/**`, `src/**`). No existe cambio demasiado pequeño: incluso un hotfix de 1 línea DEBE ser delegado al subagente especialista. El Orchestrator solo edita `docs/**`, `.genaryth/**`, `GEMINI.md` y gestiona Git remoto.
+> 2. **Transición Consulta a Despacho:** Cuando el Tech Lead pregunte dudas y apruebe una solución (*"procede"*, *"adelante"*), el Orchestrator NO pica el código; redacta el Subagent Briefing Contract y dispara `invoke_subagent`.
+> 3. **Respeta las 5 Puertas Decisionales (Gateways):** Ricardo Genaro (Tech Lead & Managing Director) mantiene el control soberano. Queda prohibido generar código masivo sin aprobación previa en Gate 2, Gate 3 y Gate 4.
+> 4. **Disciplina Git ADR-007 (Rev 2):** Staging quirúrgico estricto (`git add <alcance>`), Quality Gate local con Exit Code 0, Commits In-Thread por subagente (`<tipo>(<alcance>): <descripción> (<TICKET-ID>)`), salvaguarda de push absoluta y Pre-Push Guard Hook.
+> 5. **Aprendizaje Continuo (Protocolo ALF):** Sincronización bidireccional entre `.genaryth/learnings.json` y la memoria Obsidian (`Agent-Antigravity/mistakes.md`).
 
 ---
+
 
 # Reglas de Workspace - {{PROJECT_NAME}} & Genaryth
 
