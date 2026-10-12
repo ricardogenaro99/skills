@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "name": "genaryth-policy-interceptor-rules",
+  "description": "Reglas declarativas de seguridad, sandboxing de herramientas y restricción de comandos para subagentes en Genaryth Venture Studio.",
+  "global_security": {
+    "block_destructive_commands": true,
+    "enforce_surgical_staging": true,
+    "enforce_push_safeguard": true,
+    "enforce_hands_off_code_orchestrator": true
+  },
+  "forbidden_global_patterns": [
+    {
+      "pattern": "^git\\s+add\\s+(\\.|-A|--all|\\*|\\./)$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_GIT_WILDCARD_STAGING",
+      "reason": "Violación de ADR-007: Prohibido git add . o comodines en la raíz. Solo staging quirúrgico por archivo o ruta específica."
+    },
+    {
+      "pattern": "^git\\s+commit\\s+(-a|-am\\s+.*)$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_GIT_AUTO_COMMIT",
+      "reason": "Violación de ADR-007: Prohibido git commit -a o -am. El staging debe ser explícito y validado previamente."
+    },
+    {
+      "pattern": "^git\\s+push(\\s+.*)?$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_UNAUTHORIZED_GIT_PUSH",
+      "reason": "Violación de Salvaguarda de Push: Los subagentes tienen prohibido ejecutar git push. Reservado exclusivamente para el Orchestrator tras autorización del Tech Lead."
+    },
+    {
+      "pattern": "^(npx\\s+)?prisma\\s+migrate\\s+reset(\\s+.*)?$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_DESTRUCTIVE_PRISMA_RESET",
+      "reason": "Comando destructivo de base de datos bloqueado: Provoca pérdida irrecuperable de datos en PostgreSQL."
+    },
+    {
+      "pattern": "^(npx\\s+)?cdk\\s+deploy(\\s+.*)?$",
+      "severity": "HIGH",
+      "error_code": "ERR_UNAUTHORIZED_CDK_DEPLOY",
+      "reason": "Despliegues en AWS CloudFormation requieren autorización formal del Tech Lead y ejecución manual por el Orchestrator o pipeline CD."
+    },
+    {
+      "pattern": "^(npx\\s+)?cdk\\s+destroy(\\s+.*)?$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_DESTRUCTIVE_CDK_DESTROY",
+      "reason": "Destrucción de stacks de infraestructura CloudFormation bloqueada por seguridad."
+    },
+    {
+      "pattern": "^rm\\s+-rf\\s+(\\/|~|\\.\\.|\\*)$",
+      "severity": "CRITICAL",
+      "error_code": "ERR_DESTRUCTIVE_FILE_REMOVAL",
+      "reason": "Comando destructivo de sistema de archivos bloqueado."
+    }
+  ],
+  "roles": {
+    "orchestrator": {
+      "display_name": "Engagement & Delivery Lead / Orchestrator",
+      "allowed_write_paths": [
+        "docs/**",
+        ".genaryth/**",
+        "GEMINI.md",
+        "CLAUDE.md",
+        "AGENTS.md",
+        ".cursorrules"
+      ],
+      "forbidden_write_paths": [
+        "apps/**",
+        "packages/**",
+        "infrastructure/**",
+        "src/**"
+      ],
+      "allowed_commands": [
+        "^git\\s+status.*$",
+        "^git\\s+log.*$",
+        "^git\\s+diff.*$",
+        "^git\\s+rev-parse.*$",
+        "^git\\s+rev-list.*$",
+        "^git\\s+add\\s+(docs\\/|\\.genaryth\\/|GEMINI\\.md|CLAUDE\\.md|AGENTS\\.md|\\.cursorrules).*$",
+        "^git\\s+commit\\s+-m\\s+\"(docs|chore)\\(.*\\):\\s+.*\"$",
+        "^pnpm\\s+run\\s+(test|build|lint|typecheck).*$"
+      ],
+      "restricted_commands": [
+        {
+          "command": "^git\\s+push\\s+origin\\s+.*$",
+          "requires_hitl_approval": true,
+          "approval_role": "Tech Lead & Managing Director (Ricardo Genaro)"
+        }
+      ]
+    },
+    "subagent-architect": {
+      "display_name": "Solutions Architect & Domain Modeler",
+      "allowed_write_paths": [
+        "docs/ARCHITECTURE_SOLUTION.md",
+        "docs/openapi.yaml",
+        "docs/openapi.json",
+        "docs/rfcs/**",
+        "packages/common/src/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/web/**",
+        "apps/api/src/modules/**",
+        "apps/api/infrastructure/**"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+--filter\\s+@kinpet\\/common\\s+run\\s+build$",
+        "^pnpm\\s+run\\s+typecheck$",
+        "^git\\s+add\\s+(docs\\/|packages\\/common\\/).*$",
+        "^git\\s+commit\\s+-m\\s+\"(feat|docs)\\(.*\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    },
+    "subagent-backend": {
+      "display_name": "Senior Backend Engineer (NestJS / Prisma)",
+      "allowed_write_paths": [
+        "apps/api/src/**",
+        "apps/api/test/**",
+        "apps/api/prisma/**",
+        "packages/common/src/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/web/**",
+        "apps/api/infrastructure/**",
+        "docs/PRODUCT_SPEC_V1.md"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+(build|test|lint|typecheck).*$",
+        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+prisma:generate$",
+        "^git\\s+add\\s+apps\\/api\\/.*$",
+        "^git\\s+commit\\s+-m\\s+\"(feat|fix|test|refactor)\\(api\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    },
+    "subagent-frontend": {
+      "display_name": "Senior Frontend Engineer (Next.js / Apple Craft)",
+      "allowed_write_paths": [
+        "apps/web/src/**",
+        "apps/web/public/**",
+        "apps/web/e2e/**",
+        "apps/web/tests/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/api/**",
+        "infrastructure/**"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+--filter\\s+@kinpet\\/web\\s+run\\s+(build|lint|test|typecheck).*$",
+        "^git\\s+add\\s+apps\\/web\\/.*$",
+        "^git\\s+commit\\s+-m\\s+\"(feat|fix|ui|test)\\(web\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    },
+    "subagent-devops": {
+      "display_name": "Cloud Platform & DevOps Engineer (AWS CDK / CI-CD)",
+      "allowed_write_paths": [
+        "apps/api/infrastructure/**",
+        ".github/workflows/**",
+        ".husky/**",
+        "scripts/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/web/src/**",
+        "apps/api/src/modules/**"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+(synth|diff|typecheck|build).*$",
+        "^npx\\s+cdk\\s+(synth|diff).*$",
+        "^STAGE=[A-Z]+\\s+pnpm\\s+run\\s+(synth|diff).*$",
+        "^git\\s+add\\s+(apps\\/api\\/infrastructure\\/|\\.github\\/|\\.husky\\/|scripts\\/).*$",
+        "^git\\s+commit\\s+-m\\s+\"(feat|fix|chore)\\(infra\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    },
+    "subagent-qa": {
+      "display_name": "Lead QA & Test Automation Specialist (Playwright / Jest)",
+      "allowed_write_paths": [
+        "apps/web/e2e/**",
+        "apps/web/tests/**",
+        "apps/api/test/**",
+        "docs/qa/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/api/src/modules/**",
+        "apps/api/infrastructure/**",
+        "apps/web/src/app/**"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+run\\s+test.*$",
+        "^pnpm\\s+--filter\\s+.*\\s+run\\s+(test|test:e2e).*$",
+        "^npx\\s+playwright\\s+test.*$",
+        "^git\\s+add\\s+apps\\/[^\\/]+\\/(test|tests|e2e)\\/.*$",
+        "^git\\s+commit\\s+-m\\s+\"test\\(qa\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    },
+    "subagent-secops": {
+      "display_name": "Security & Compliance Specialist (AppSec / OWASP)",
+      "allowed_write_paths": [
+        "docs/security/**",
+        "docs/threat-models/**"
+      ],
+      "forbidden_write_paths": [
+        "apps/**",
+        "packages/**"
+      ],
+      "allowed_commands": [
+        "^pnpm\\s+audit.*$",
+        "^git\\s+add\\s+docs\\/(security|threat-models)\\/.*$",
+        "^git\\s+commit\\s+-m\\s+\"docs\\(secops\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
+      ]
+    }
+  }
+}

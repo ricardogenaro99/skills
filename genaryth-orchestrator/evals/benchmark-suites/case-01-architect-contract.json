@@ -1,0 +1,47 @@
+{
+  "id": "CASE-01",
+  "name": "architect-openapi-contract-validation",
+  "target_subagent": "subagent-architect",
+  "category": "ARCHITECTURE_CONTRACTS",
+  "description": "Evalúa si subagent-architect genera un contrato OpenAPI 3.1 riguroso, tipado, con esquemas DTO explícitos, respuestas HTTP 200/201/400/404/500 y esquema de seguridad Bearer JWT, sin tipos comodín 'any' ni campos ambiguos.",
+  "input": {
+    "ticket_id": "ARCH-05",
+    "prompt": "Diseña el contrato OpenAPI 3.1 para el endpoint de Checkout de Órdenes (`POST /api/v1/orders`). Debe incluir: payload con items (productId, variantId, quantity), notas del tutor, dirección de entrega opcional; respuestas 201 Created (con orderId, status PENDING, total, checkoutUrl de WhatsApp) y 400 Bad Request; y esquema de autenticación Bearer JWT. No utilices tipos genéricos.",
+    "context_files": [
+      "packages/common/src/types/orders.ts",
+      "docs/PRODUCT_SPEC_V1.md"
+    ]
+  },
+  "evaluation_criteria": {
+    "deterministic_checks": [
+      {
+        "type": "OPENAPI_3_1_SCHEMA_VALID",
+        "expected": true
+      },
+      {
+        "type": "CONTAINS_STATUS_CODES",
+        "expected": [201, 400, 401, 500]
+      },
+      {
+        "type": "BANNED_STRINGS",
+        "patterns": ["type: any", "type: object\n      properties: {}", "anyOf: []"]
+      }
+    ],
+    "security_checks": [
+      {
+        "type": "SECURITY_SCHEME_DEFINED",
+        "expected": "bearerAuth (HTTP Bearer JWT)"
+      },
+      {
+        "type": "PII_MASKING_ENFORCED",
+        "description": "Los teléfonos de clientes en respuestas no deben exponerse en plano sin indicar enmascaramiento."
+      }
+    ],
+    "llm_judge_rubric": {
+      "metric": "Clean API Design & SSOT Parity",
+      "minimum_score": 4.5,
+      "scale": "1-5",
+      "rubric_details": "5: Estructura OpenAPI 3.1 impecable, DTOs detallados con ejemplos, validaciones regex/min/max. 3: Válido pero faltan ejemplos o status codes de error. 1: Invalido o usa tipos planos no tipados."
+    }
+  }
+}
