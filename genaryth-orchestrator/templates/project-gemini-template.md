@@ -8,8 +8,17 @@
 > 3. **Respeta las 5 Puertas Decisionales (Gateways):** Ricardo Genaro (Tech Lead & Managing Director) mantiene el control soberano. Queda prohibido generar código masivo sin aprobación previa en Gate 2, Gate 3 y Gate 4.
 > 4. **Disciplina Git ADR-007 (Rev 2):** Staging quirúrgico estricto (`git add <alcance>`), Quality Gate local con Exit Code 0, Commits In-Thread por subagente (`<tipo>(<alcance>): <descripción> (<TICKET-ID>)`), salvaguarda de push absoluta y Pre-Push Guard Hook.
 > 5. **Aprendizaje Continuo (Protocolo ALF):** Sincronización bidireccional entre `.genaryth/learnings.json` y la memoria Obsidian (`Agent-Antigravity/mistakes.md`).
+> 6. **Tríada de Gobernanza Universal (ADR-010):** Mantener en la raíz los 3 symlinks POSIX apuntando a `GEMINI.md` (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`).
+
+<!--
+🔗 INICIALIZACIÓN MANDATORIA DE SYMLINKS (ADR-010) - Ejecutar en la raíz del repo:
+ln -s GEMINI.md CLAUDE.md
+ln -s GEMINI.md AGENTS.md
+ln -s GEMINI.md .cursorrules
+-->
 
 ---
+
 
 
 # Reglas de Workspace - {{PROJECT_NAME}} & Genaryth

@@ -248,7 +248,44 @@ Todo commit o interacción con Git se rige por la política institucional en [gi
 
 ---
 
-## 💾 8. Sincronización SSOT en Tiempo Real
+## 🌐 8. Tríada de Gobernanza Universal Multi-Agente mediante Symlinks SSOT (ADR-010)
+
+> [!IMPORTANT]
+> **SSOT AGNÓSTICA Y COMPATIBILIDAD UNIVERSAL DE HERRAMIENTAS:**
+> Diferentes asistentes y entornos de desarrollo asistidos por IA leen archivos de reglas específicos en la raíz del repositorio:
+> - **Google Antigravity / Gemini CLI:** Lee `GEMINI.md`.
+> - **Claude Code (Anthropic):** Lee `CLAUDE.md`.
+> - **Cursor IDE:** Lee `.cursorrules`.
+> - **OpenCode / Aider / Linux Foundation Standard:** Lee `AGENTS.md`.
+>
+> Para evitar la duplicación de directivas, inconsistencias de versión y drift de gobernanza, **todo proyecto o repositorio en Genaryth DEBE definir `GEMINI.md` como el archivo físico canónico maestro (SSOT)** y mantener en la raíz la **Tríada de Symlinks Relativos POSIX**:
+> ```bash
+> ln -s GEMINI.md CLAUDE.md
+> ln -s GEMINI.md AGENTS.md
+> ln -s GEMINI.md .cursorrules
+> ```
+
+### Tabla de Compatibilidad Multi-Agente
+| Herramienta / Plataforma | Archivo Raíz Esperado | Mecanismo de Resolución | Estado de Soporte |
+| :--- | :--- | :--- | :---: |
+| **Google Antigravity / Gemini CLI** | `GEMINI.md` | Archivo SSOT Canónico Físico | ✅ Nativo Canónico |
+| **Claude Code (Anthropic)** | `CLAUDE.md` | Symlink POSIX relativo a `GEMINI.md` | ✅ Nativo Universal |
+| **Cursor IDE** | `.cursorrules` | Symlink POSIX relativo a `GEMINI.md` | ✅ Nativo Universal |
+| **OpenCode / Aider / LF Standard** | `AGENTS.md` | Symlink POSIX relativo a `GEMINI.md` | ✅ Nativo Universal |
+
+### Directiva Obligatoria de Kickoff y Auditoría
+1. **Kickoff Mandatorio:** En todo nuevo repositorio instanciado (mediante scaffolder o kickoff manual), la creación de la Tríada de Symlinks es un paso **bloqueante** del Gate 1.
+2. **Auditoría Preventiva del Orchestrator:** Al iniciar cualquier interacción en un repositorio de Genaryth, el Orchestrator DEBE verificar la existencia de los 3 symlinks. Si alguno falta o fue roto por un entorno no-POSIX, debe restaurarlo de inmediato:
+   ```bash
+   [ -L CLAUDE.md ] || ln -s GEMINI.md CLAUDE.md
+   [ -L AGENTS.md ] || ln -s GEMINI.md AGENTS.md
+   [ -L .cursorrules ] || ln -s GEMINI.md .cursorrules
+   ```
+* Consulta la especificación detallada en [universal-agent-governance.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/universal-agent-governance.md).
+
+---
+
+## 💾 9. Sincronización SSOT en Tiempo Real
 
 El Orchestrator es el único responsable de mantener la coherencia y trazabilidad del proyecto al recibir los reportes de los subagentes:
 
@@ -268,7 +305,7 @@ El Orchestrator es el único responsable de mantener la coherencia y trazabilida
 
 ---
 
-## 🧠 9. Aprendizaje Continuo Multiagente & Protocolo ALF (Agent Learning & Feedback)
+## 🧠 10. Aprendizaje Continuo Multiagente & Protocolo ALF (Agent Learning & Feedback)
 
 > [!TIP]
 > **SISTEMA DE INTELIGENCIA COMPUESTA (COMPOUND AI SQUAD):**
@@ -305,7 +342,7 @@ flowchart LR
 
 ---
 
-## 🔄 10. Protocolo de Gestión del Cambio y Análisis de Impacto
+## 🔄 11. Protocolo de Gestión del Cambio y Análisis de Impacto
 
 Cuando el Tech Lead o el cliente soliciten una modificación durante el ciclo de vida:
 1. **Detener la ejecución operativa:** Suspender temporalmente las tareas en curso.
@@ -318,13 +355,15 @@ Cuando el Tech Lead o el cliente soliciten una modificación durante el ciclo de
 
 ---
 
-## 📚 11. Compendio de Estándares Institucionales de Genaryth
+## 📚 12. Compendio de Estándares Institucionales de Genaryth
 
 Todos los subagentes deben consultar y aplicar con rigor las referencias maestras del marco:
 * [lifecycle-gates.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/lifecycle-gates.md): Especificación de las 5 Puertas Decisionales y Orquestación Dual-Track.
 * [git-governance-policy.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/git-governance-policy.md): Política de Git Governance ADR-007 y Staging Quirúrgico.
+* [universal-agent-governance.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/universal-agent-governance.md): Tríada de Gobernanza Universal Multi-Agente (Symlinks SSOT GEMINI.md, CLAUDE.md, AGENTS.md, .cursorrules).
 * [squad-operations-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/squad-operations-standards.md): Dinámica operativa del Squad, los 6 Hilos Oficiales, Subagent Briefing Contracts y Aprendizaje Continuo (ALF).
 * [software-engineering-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/software-engineering-standards.md): Clean/Hexagonal Architecture, SOLID, transacciones atómicas ACID, Server Components en Next.js y OpenAPI SSOT.
 * [performance-and-privacy-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/performance-and-privacy-standards.md): The Nala Performance SLA (LCP < 1.5s, bundle < 80 KB), ingesta asíncrona < 150ms, enmascaramiento de PII y Argon2id.
 * [cloud-devops-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/cloud-devops-standards.md): Estándar de Nomenclatura Cloud (Secuencial 001), cuotas Lambda (< 20 KB), RequestValidators, RDS Proxy y CD manual con `workflow_dispatch`.
+
 
