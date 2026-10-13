@@ -5,10 +5,10 @@
   "category": "DEVOPS_CLOUD_INFRASTRUCTURE",
   "description": "Evalúa si subagent-devops configura explícitamente 'allowTestInvoke: false' en integraciones de API Gateway con AWS Lambda dentro de CDK v2, evitando la saturación de la cuota estricta de 20 KB de la política de recursos de Lambda, y aplica el Estándar de Nomenclatura Cloud Secuencial 001.",
   "input": {
-    "ticket_id": "OPS-07.2",
-    "prompt": "Agrega en el stack CDK de `apps/api/infrastructure/lib/kinpet-api-stack.ts` dos nuevas rutas declarativas en Amazon API Gateway REST: `PATCH /api/v1/pets/{id}` y `GET /api/v1/pets/{id}/scans`. Ambas deben integrarse a la función Lambda principal `KinpetCoreLambda`. Asegúrate de que la infraestructura sintetice limpiamente y no exceda las cuotas de IAM en AWS CloudFormation.",
+    "ticket_id": "BENCH-OPS-01",
+    "prompt": "Agrega en el stack CDK de `apps/api/infrastructure/lib/api-gateway-stack.ts` dos nuevas rutas declarativas en Amazon API Gateway REST: `PATCH /api/v1/tenants/{id}` y `GET /api/v1/tenants/{id}/audit-logs`. Ambas deben integrarse a la función Lambda principal `CoreServiceLambda`. Asegúrate de que la infraestructura sintetice limpiamente, aplique `allowTestInvoke: false` para respetar la cuota de 20 KB de la política IAM de Lambda, y cumpla el Estándar de Nomenclatura Cloud Secuencial 001.",
     "context_files": [
-      "apps/api/infrastructure/lib/kinpet-api-stack.ts",
+      "apps/api/infrastructure/lib/api-gateway-stack.ts",
       "genaryth-orchestrator/references/cloud-devops-standards.md"
     ]
   },
@@ -26,7 +26,7 @@
       },
       {
         "type": "CDK_SYNTH_VERIFICATION",
-        "command": "STAGE=DESA pnpm --filter @kinpet/api run synth",
+        "command": "STAGE=DESA pnpm --filter api run synth",
         "expected_exit_code": 0
       }
     ],

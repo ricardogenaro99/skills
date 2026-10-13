@@ -53,11 +53,13 @@ El buque insignia de la colección. Implementa el **Genaryth Autonomous Squad Fr
 4. **Agent Execution Harness (Runtime Sandboxing & Guardrails):**
    * **Context Pruning Engine:** Descarte de ruido contextual e inyección quirúrgica de slices de código.
    * **Tool Sandbox Matrix:** Permisos declarativos por rol (lectura, mutación de archivos, ejecución terminal).
+   * **Pre-Write Guardrails Engine (`pre-write-guard.ts`):** Escaneo en memoria contra fugas de secretos (AWS, Stripe, JWT, Private Keys) y violación de fronteras de arquitectura.
    * **Policy Interceptor (`interceptor-rules.json`):** Bloqueo en seco de operaciones prohibidas (`git add .`, push no autorizado, `cdk deploy`, `prisma migrate reset`, eliminaciones masivas).
    * **State Synchronizer:** Gestión de estado de proyecto y gobernanza en `.genaryth/state.json`.
 5. **Evaluation & Benchmarking Harness (Quality & FinOps Graders):**
    * **Grader Tripartito:** Determinístico (AST / `tsc` / Jest), Seguridad (SAST / Git Policies) y LLM-as-a-Judge (Clean Code).
-   * **Benchmark Suites Canónicas:** Casos de prueba estandarizados en `evals/benchmark-suites/` para certificar a los subagentes antes de tocar código de producción.
+   * **Benchmark Suites Canónicas (`BENCH-*`):** Casos de prueba estandarizados en `evals/benchmark-suites/` para certificar a los subagentes antes de tocar código de producción.
+   * **Multi-Agent Benchmark Runner CLI (`runner.ts` / `harness-cli.sh`):** Ejecutor autónomo en TypeScript que corre las suites en tiempo real, emite scorecards visuales y genera reportes de certificación.
    * **FinOps & Latency Tracking:** Monitorización de consumo de tokens y ratio costo/efectividad.
 6. **Git Anti-Chancado & Governance Policy (ADR-007 & ADR-010):**
    * Staging quirúrgico obligatorio archivo por archivo.

@@ -64,7 +64,7 @@ Para garantizar una evaluación exhaustiva y objetiva, cada ejecución se somete
 * **Rúbrica Estándar (Escala 1 al 5):**
   1. *Clean Architecture & SOLID:* Inversión de dependencias, desacoplamiento de frameworks en la capa de dominio.
   2. *ACID & Concurrencia:* Uso explícito de transacciones transaccionales (`prisma.$transaction`) en mutaciones enlazadas.
-  3. *The Nala Performance SLA:* Separación estricta entre Server Components y Client Components en Next.js App Router.
+  3. *Genaryth Performance SLA:* Separación estricta entre Server Components y Client Components en Next.js App Router para garantizar LCP < 1.5s y First Load JS mínimo.
   4. *Rigor de Contratos:* DTOs tipados sin uso de comodines `any` o `object`.
 
 ---
