@@ -9,6 +9,7 @@
 > 4. **Disciplina Git ADR-007 (Rev 2):** Staging quirúrgico estricto (`git add <alcance>`), Quality Gate local con Exit Code 0, Commits In-Thread por subagente (`<tipo>(<alcance>): <descripción> (<TICKET-ID>)`), salvaguarda de push absoluta y Pre-Push Guard Hook.
 > 5. **Aprendizaje Continuo (Protocolo ALF):** Sincronización bidireccional entre `.genaryth/learnings.json` y la memoria Obsidian (`Agent-Antigravity/mistakes.md`).
 > 6. **Tríada de Gobernanza Universal (ADR-010):** Mantener en la raíz los 3 symlinks POSIX apuntando a `GEMINI.md` (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`).
+> 7. **Execution Harness & Guardrails (ADR-011):** Respeto estricto a las matrices de sandboxing (`interceptor-rules.json`), escaneo de pre-escritura contra fugas de secretos (AWS, Stripe, JWT), boundaries hexagonales y cumplimiento del **Genaryth Performance SLA**.
 
 <!--
 🔗 INICIALIZACIÓN MANDATORIA DE SYMLINKS (ADR-010) - Ejecutar en la raíz del repo:
