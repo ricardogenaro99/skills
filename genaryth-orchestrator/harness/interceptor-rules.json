@@ -103,7 +103,7 @@
         "apps/api/infrastructure/**"
       ],
       "allowed_commands": [
-        "^pnpm\\s+--filter\\s+@kinpet\\/common\\s+run\\s+build$",
+        "^pnpm\\s+(--filter\\s+@[a-zA-Z0-9_-]+\\/common|--filter\\s+common)\\s+run\\s+build$",
         "^pnpm\\s+run\\s+typecheck$",
         "^git\\s+add\\s+(docs\\/|packages\\/common\\/).*$",
         "^git\\s+commit\\s+-m\\s+\"(feat|docs)\\(.*\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
@@ -123,8 +123,8 @@
         "docs/PRODUCT_SPEC_V1.md"
       ],
       "allowed_commands": [
-        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+(build|test|lint|typecheck).*$",
-        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+prisma:generate$",
+        "^pnpm\\s+(--filter\\s+@[a-zA-Z0-9_-]+\\/api|--filter\\s+api)\\s+run\\s+(build|test|lint|typecheck).*$",
+        "^pnpm\\s+(--filter\\s+@[a-zA-Z0-9_-]+\\/api|--filter\\s+api)\\s+run\\s+prisma:generate$",
         "^git\\s+add\\s+apps\\/api\\/.*$",
         "^git\\s+commit\\s+-m\\s+\"(feat|fix|test|refactor)\\(api\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
       ]
@@ -142,7 +142,7 @@
         "infrastructure/**"
       ],
       "allowed_commands": [
-        "^pnpm\\s+--filter\\s+@kinpet\\/web\\s+run\\s+(build|lint|test|typecheck).*$",
+        "^pnpm\\s+(--filter\\s+@[a-zA-Z0-9_-]+\\/web|--filter\\s+web)\\s+run\\s+(build|lint|test|typecheck).*$",
         "^git\\s+add\\s+apps\\/web\\/.*$",
         "^git\\s+commit\\s+-m\\s+\"(feat|fix|ui|test)\\(web\\):\\s+.*\\([A-Z]+-\\d+\\)\"$"
       ]
@@ -160,7 +160,7 @@
         "apps/api/src/modules/**"
       ],
       "allowed_commands": [
-        "^pnpm\\s+--filter\\s+@kinpet\\/api\\s+run\\s+(synth|diff|typecheck|build).*$",
+        "^pnpm\\s+(--filter\\s+@[a-zA-Z0-9_-]+\\/(api|infra)|--filter\\s+(api|infra))\\s+run\\s+(synth|diff|typecheck|build).*$",
         "^npx\\s+cdk\\s+(synth|diff).*$",
         "^STAGE=[A-Z]+\\s+pnpm\\s+run\\s+(synth|diff).*$",
         "^git\\s+add\\s+(apps\\/api\\/infrastructure\\/|\\.github\\/|\\.husky\\/|scripts\\/).*$",

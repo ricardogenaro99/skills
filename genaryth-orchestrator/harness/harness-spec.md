@@ -83,6 +83,13 @@ El acceso a las herramientas del entorno está estrictamente segmentado según e
 | **subagent-devops** | Global | `apps/*/infrastructure/**`, `.github/**`, scripts | CDK synth, CDK diff, Docker build | ❌ No | 🚫 PROHIBIDO |
 | **subagent-qa** | Global | `apps/*/e2e/**`, `apps/*/tests/**`, `docs/qa/**` | Jest, Vitest, Playwright E2E | ❌ No | 🚫 PROHIBIDO |
 | **subagent-secops** | Global | `docs/security/**`, políticas de seguridad | Auditorías de dependencias (`pnpm audit`, trivy) | ❌ No | 🚫 PROHIBIDO |
+| **subagent-data-ai** | Global | `apps/ai-worker/**`, scripts de datos, prompts | Python/TS runner, tests de embeddings | ❌ No | 🚫 PROHIBIDO |
+| **subagent-bpa** | Global | `docs/processes/**`, diagramas de flujo BPMN/Mermaid | Validación de documentación, linters Markdown | ❌ No | 🚫 PROHIBIDO |
+| **subagent-po** | Global | `docs/requirements/**`, `PRODUCT_SPEC_*.md` | Solo lectura / inspección de requerimientos | ❌ No | 🚫 PROHIBIDO |
+| **subagent-sre** | Global | `infrastructure/monitoring/**`, alertas CloudWatch | Pruebas de estrés k6, inspección de métricas | ❌ No | 🚫 PROHIBIDO |
+| **subagent-finops** | Global | `docs/finops/**`, reportes de estimación | Infracost, estimadores de presupuesto | ❌ No | 🚫 PROHIBIDO |
+| **subagent-automation** | Global | Workflows n8n, scripts de automatización | Ejecución local de flows n8n (MCP tools) | ❌ No | 🚫 PROHIBIDO |
+| **subagent-tech-writer** | Global | `docs/**`, `README.md`, guías de onboarding | Linters de documentación (`markdownlint`) | ❌ No | 🚫 PROHIBIDO |
 
 ---
 
@@ -140,3 +147,31 @@ Al finalizar con éxito una tarea, el Harness coordina la actualización transac
    * Registra la entrada en `commit_log` con timestamp ISO y autor.
    * Marca el checklist en `docs/SPRINT_BOARD.md` conservando notas previas.
 4. **Liberación de Hilo:** El hilo operativo pasa a estado `IDLE`, listo para el siguiente despacho.
+
+---
+
+## 6. Pre-Write Guardrails & CLI Runner (`runner.ts`)
+
+Para pasar de una especificación estática a un entorno ejecutable en tiempo real, el harness incluye dos componentes de software:
+
+### 6.1 Pre-Write Guardrails Engine (`pre-write-guard.ts`)
+Intercepta el contenido en memoria antes de persistir cualquier archivo a disco:
+* **Secret Leak Blocker:** Escaneo heurístico regex contra claves de AWS (`AKIA...`), tokens de API (`sk-...`, Stripe, GitHub), JWTs hardcodeados y cabeceras de claves privadas (`BEGIN PRIVATE KEY`).
+* **Hexagonal Boundary Enforcement:** Prohíbe dependencias de frameworks de infraestructura (`@nestjs/`, `@prisma/client`, `typeorm`) en módulos de dominio puro (`src/domain/**`).
+* **Anti-Any Enforcement:** Bloquea el uso de `: any` o `<any>` en contratos DTO o interfaces tipadas.
+* **RSC Boundary Guard:** Detecta fugas de hooks de cliente (`useState`, `useEffect`) dentro de Server Components de Next.js (`page.tsx`, `layout.tsx`).
+
+### 6.2 Multi-Agent Benchmark Runner (`runner.ts` & `harness-cli.sh`)
+CLI ejecutable para certificar subagentes contra las suites canónicas:
+```bash
+# Ejecutar la batería completa de benchmarking
+./genaryth-orchestrator/harness/harness-cli.sh --all
+
+# Evaluar una suite individual específica
+./genaryth-orchestrator/harness/harness-cli.sh --suite BENCH-BE-01
+
+# Generar reporte formal en Markdown (docs/BENCHMARK_REPORT.md)
+./genaryth-orchestrator/harness/harness-cli.sh --all --report
+```
+El runner ejecuta los 3 evaluadores (Determinístico, Seguridad y LLM-as-a-Judge), emite un Scorecard visual en terminal con colores y genera veredictos `CERTIFIED` o `REJECTED` con Exit Code 0 o 1.
+

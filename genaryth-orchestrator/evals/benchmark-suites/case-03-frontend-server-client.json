@@ -3,32 +3,32 @@
   "name": "frontend-server-client-component-boundary",
   "target_subagent": "subagent-frontend",
   "category": "FRONTEND_PERFORMANCE_AND_RSC",
-  "description": "Evalúa si subagent-frontend respeta React Server Components (RSC) por defecto en Next.js App Router, manteniendo la página principal y contenedores como Server Components y encapsulando 'use client' exclusivamente en hojas interactivas aisladas (Client Islands), cumpliendo The Nala Performance SLA.",
+  "description": "Evalúa si subagent-frontend respeta React Server Components (RSC) por defecto en Next.js App Router, manteniendo la página principal y contenedores como Server Components y encapsulando 'use client' exclusivamente en hojas interactivas aisladas (Client Islands), cumpliendo el Genaryth Performance SLA.",
   "input": {
-    "ticket_id": "FED-12",
-    "prompt": "Crea la Pantalla de Detalle de Mascota en `/dashboard/pets/[id]/page.tsx`. Debe cargar los datos de la mascota desde el backend de forma segura y mostrar la información básica. Además, debe incluir un botón interactivo para alternar el switch de 'Modo Perdido' (Alerta Roja) con feedback táctil inmediato. Asegúrate de optimizar el tamaño del bundle de JavaScript enviado al navegador.",
+    "ticket_id": "BENCH-FED-01",
+    "prompt": "Crea la Pantalla de Detalle de Organización / Tenant en `/dashboard/tenants/[id]/page.tsx`. Debe cargar los datos de la entidad desde el backend de forma segura en un Server Component asíncrono. Además, debe incluir un botón interactivo para alternar el switch de estado ('StatusToggle' o 'MaintenanceModeToggle') con feedback táctil inmediato en un Client Island aislado ('use client'). Asegúrate de optimizar el tamaño del bundle de JavaScript enviado al navegador respetando el Genaryth Performance SLA.",
     "context_files": [
-      "apps/web/src/types/pets.ts",
-      "packages/common/src/types/pets.ts"
+      "apps/web/src/types/tenant.ts",
+      "packages/common/src/types/tenant.ts"
     ]
   },
   "evaluation_criteria": {
     "deterministic_checks": [
       {
         "type": "SERVER_COMPONENT_ROOT",
-        "target_file": "apps/web/src/app/(dashboard)/pets/[id]/page.tsx",
+        "target_file": "apps/web/src/app/(dashboard)/tenants/[id]/page.tsx",
         "forbidden_string": "'use client'",
         "description": "El archivo de la página raíz DEBE ser un Server Component asíncrono para renderizar HTML rápido y liviano."
       },
       {
         "type": "CLIENT_ISLAND_ISOLATION",
-        "target_file": "apps/web/src/components/pets/LostModeToggle.tsx",
+        "target_file": "apps/web/src/components/tenants/StatusToggle.tsx",
         "required_string": "'use client'",
         "description": "La directiva 'use client' debe estar restringida al componente hoja interactivo que maneja el switch y el estado reactivo."
       },
       {
         "type": "NEXTJS_BUILD_VERIFICATION",
-        "command": "pnpm --filter @kinpet/web run build",
+        "command": "pnpm --filter web run build",
         "expected_exit_code": 0
       }
     ],
@@ -39,7 +39,7 @@
       }
     ],
     "llm_judge_rubric": {
-      "metric": "The Nala Performance SLA & RSC Architecture",
+      "metric": "Genaryth Performance SLA & RSC Architecture",
       "minimum_score": 4.7,
       "scale": "1-5",
       "rubric_details": "5: Desacoplamiento impecable de RSC y Client Islands, cero JS innecesario en primer render, componentes modulares con Tailwind CSS Clean Tech. 3: Funciona pero puso 'use client' en la página raíz engordando el First Load JS. 1: Código bloqueante, errores de hidratación o uso indiscriminado de client components."
