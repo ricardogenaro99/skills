@@ -175,3 +175,32 @@ CLI ejecutable para certificar subagentes contra las suites canónicas:
 ```
 El runner ejecuta los 3 evaluadores (Determinístico, Seguridad y LLM-as-a-Judge), emite un Scorecard visual en terminal con colores y genera veredictos `CERTIFIED` o `REJECTED` con Exit Code 0 o 1.
 
+---
+
+## 7. Local Project Harness Enforcer (`.genaryth/harness/`)
+
+Para garantizar que los guardrails no dependan exclusivamente de la sesión de contexto del modelo, cada repositorio del ecosistema instanciará una contraparte local:
+
+```
+<project-root>/
+├── .genaryth/
+│   ├── harness/
+│   │   ├── config.json          # Configuración declarativa local del proyecto
+│   │   └── enforcer.mjs         # Script ejecutable de auditoría en Node ESM nativo
+│   ├── state.json               # SSOT de estado, puertas y commits
+│   └── learnings.json           # Heurísticas descubiertas bajo Protocolo ALF
+└── package.json                 # Script "harness:check" y "harness:check:staged"
+```
+
+### 7.1 Integración en `package.json`
+Todo proyecto incorpora en su `package.json` raíz:
+```json
+"scripts": {
+  "harness:check": "node .genaryth/harness/enforcer.mjs",
+  "harness:check:staged": "node .genaryth/harness/enforcer.mjs --staged"
+}
+```
+
+### 7.2 Integración en Git Hooks (`pre-commit` & CI)
+- En `pre-commit`: Valida quirúrgicamente los archivos staged (`pnpm harness:check:staged`). Si detecta un secreto o una violación de arquitectura hexagonal, aborta el commit antes de registrarse en Git.
+- En CI (`.github/workflows/ci.yml`): Se ejecuta como Quality Gate bloqueante en GitHub Actions.
