@@ -59,3 +59,22 @@ Alineado al estándar institucional de Genaryth (`ADR-006`):
 2. **Despacho Manual Bajo Demanda (`workflow_dispatch`):**
    - Los pipelines de despliegue a la nube en GitHub Actions deben configurarse con menú interactivo `workflow_dispatch` y un selector dropdown de ambiente (`DESA`, `TEST`, `PROD`).
    - El despliegue a AWS requiere la intervención humana consciente de Ricardo Genaro mediante el botón **"Run workflow"** o CLI autorizado, garantizando cero despliegues accidentales.
+
+---
+
+## 🛠️ 4. Checklist Obligatorio DevOps: Scoping y Segregación de Puertos (ADR-013)
+
+Todo `subagent-devops` y `subagent-sre` que intervenga en la inicialización, scaffolding o mantenimiento de monorepos DEBE validar y certificar los siguientes dos controles de calidad antes de sellar su ticket:
+
+### ✅ 4.1 Auditoría de Scoping Corporativo en `package.json`
+- [ ] **Cero Nombres Planos:** Ningún archivo `package.json` dentro de `apps/*` o `packages/*` puede tener nombres genéricos sin scope (`web`, `api`, `hub`, `common`, etc.).
+- [ ] **Namespace Institucional:** Cada módulo debe estar formalmente tipado bajo el namespace `@genaryth/<app-name>` o `@<org>/<app-name>` (ej. `@genaryth/web`, `@genaryth/api`, `@genaryth/studio-hub`, `@genaryth/contracts`).
+- [ ] **Resolución Interna `workspace:*`:** Toda dependencia entre proyectos del monorepo debe referenciarse usando el prefijo con scope corporativo y la versión `workspace:*`.
+
+### ✅ 4.2 Matriz de Puertos Locales en Scripts Canónicos
+- [ ] **Web Principal (`apps/web`):** El script `"dev"` en `package.json` debe fijar el puerto 3000 de forma explícita (`"dev": "next dev -p 3000"`).
+- [ ] **Backend Core (`apps/api`):** El servidor debe escuchar en `process.env.PORT || 3001` y el script de desarrollo `"dev": "nest start --watch"` no debe interferir con el 3000.
+- [ ] **Studio Hub / Internal Cockpit (`apps/studio-hub`):** El script `"dev"` en `package.json` debe fijar el puerto 3002 de forma explícita (`"dev": "next dev -p 3002"`).
+- [ ] **Ventures Secundarias o Microfrontends (`apps/*`):** Deben utilizar puertos 3003 en adelante de manera secuencial y determinista.
+- [ ] **Verificación de Concurrencia:** Certificar que la ejecución simultánea (`pnpm dev` en la raíz vía Turborepo) no lance errores `EADDRINUSE`.
+

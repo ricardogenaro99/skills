@@ -89,3 +89,38 @@ En todo microservicio o backend (NestJS, Node, Python):
    - Aceptación asíncrona: `202 Accepted` (ingestas de alta frecuencia, webhooks, telemetría GPS).
    - Errores de cliente: `400 Bad Request` (payload inválido), `401 Unauthorized` (sin token/expirado), `403 Forbidden` (sin permisos de rol), `404 Not Found` (recurso inexistente), `409 Conflict` (duplicado/estado incompatible).
    - Estructura uniforme de error JSON: `{ statusCode, message, error, timestamp, path }`.
+
+---
+
+## 📦 5. Scoping Corporativo y Segregación de Puertos Locales (ADR-013)
+
+### 🏷️ 5.1 Directiva de Scoping Corporativo Obligatorio en Monorepos
+Queda **estrictamente prohibido** asignar nombres planos o genéricos en los archivos `package.json` de aplicaciones (`apps/*`) o librerías internas (`packages/*`).
+
+- 🚫 **Anti-patrón Prohibido:** `"name": "web"`, `"name": "api"`, `"name": "common"`, `"name": "hub"`.
+- ✅ **Estándar Canónico:** `"name": "@<org>/<nombre-modulo>"` o `"name": "@genaryth/<nombre-modulo>"`.
+  - Ejemplos:
+    - `apps/web/package.json` $\rightarrow$ `"name": "@genaryth/web"` (o `@kinpet/web`, `@sprintflow/web`).
+    - `apps/api/package.json` $\rightarrow$ `"name": "@genaryth/api"`.
+    - `apps/studio-hub/package.json` $\rightarrow$ `"name": "@genaryth/studio-hub"`.
+    - `packages/contracts/package.json` $\rightarrow$ `"name": "@genaryth/contracts"`.
+    - `packages/ui/package.json` $\rightarrow$ `"name": "@genaryth/ui"`.
+- **Beneficios Arquitectónicos:**
+  1. **Aislamiento de Registro:** Elimina el riesgo de colisiones con paquetes públicos de npm.
+  2. **Resolución Determinista en Workspace:** Facilita el consumo interno seguro mediante protocolos de monorepo (`"dependencies": { "@genaryth/contracts": "workspace:*" }`).
+  3. **Filtros Quirúrgicos de Turbo/Pnpm:** Habilita comandos precisos sin ambigüedades (`pnpm --filter @genaryth/web build`).
+
+### 🔌 5.2 Matriz Canónica de Segregación de Puertos Locales
+Para erradicar conflictos de sockets concurrentes (`EADDRINUSE`) al arrancar el monorepo en desarrollo local (`pnpm dev`), se define una segregación estricta y predecible de puertos:
+
+| Puerto | Rol / Servicio | Directorio Canónico | Comando / Configuración Canónica |
+| :---: | :--- | :--- | :--- |
+| **`3000`** | **Web Pública B2B / Portal Principal** | `apps/web/` | `"dev": "next dev -p 3000"` |
+| **`3001`** | **API / Backend NestJS / Microservicios Core** | `apps/api/` | `process.env.PORT \|\| 3001` (`"dev": "nest start --watch"`) |
+| **`3002`** | **Studio Hub / Internal Cockpit (IOS)** | `apps/studio-hub/` | `"dev": "next dev -p 3002"` |
+| **`3003+`** | **Ventures Secundarias, Microfrontends o Simuladores** | `apps/simulators/`, etc. | Puertos secuenciales dedicados (`3003`, `3004`, etc.) |
+
+**Reglas de Implementación:**
+1. Los scripts `dev` en los `package.json` respectivos DEBEN declarar explícitamente el flag de puerto (`-p <PORT>`) o respetar el fallback de variable de entorno sin colisionar con el puerto 3000 predeterminado de Next.js.
+2. Si un microfrontend o servicio backend intenta vincularse a un puerto ya reservado en la matriz, el Quality Gate local de DevOps rechazará la configuración.
+

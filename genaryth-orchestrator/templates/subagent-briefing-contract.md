@@ -54,8 +54,13 @@ Antes de preparar o comprometer cualquier cambio, DEBES ejecutar en la terminal 
 {{QUALITY_GATE_COMMANDS}}
 ```
 
+### ✅ Checklist de Verificación Bloqueante:
+- [ ] **Exit Code 0:** Linter, compilador (`tsc --noEmit`) y pruebas unitarias pasan limpiamente sin warnings ni errores.
+- [ ] **Scoping Corporativo (ADR-013):** Si se creó o modificó algún `package.json`, verificar que ningún módulo tenga nombres planos (ej. `"name": "web"`, `"name": "api"`). Todo paquete debe conservar el namespace corporativo `@genaryth/*` o `@<org>/*`.
+- [ ] **Segregación de Puertos (ADR-013):** En caso de tocar scripts `dev` o configuraciones de servidor, validar que respeten la matriz de puertos (3000 Web, 3001 API, 3002 Studio Hub).
+
 > [!WARNING]
-> Si la suite falla (lint, typecheck o tests en rojo), NO intentes comitear. Corrige los errores en tu código hasta obtener salida limpia (Exit Code 0).
+> Si la suite falla (lint, typecheck, tests en rojo o violación de directivas corporativas), NO intentes comitear. Corrige los errores en tu código hasta obtener salida limpia (Exit Code 0).
 
 ## 🧠 5. Lecciones Aprendidas & Heurísticas Previas (Knowledge Base)
 Antes de escribir código o configurar herramientas, internaliza las siguientes heurísticas y errores pasados rescatados de `.genaryth/learnings.json` y de la memoria en Obsidian (`mistakes.md`):

@@ -113,3 +113,9 @@ Al completar su tarea y generar el commit local, el subagente DEBE emitir inmedi
 - **Estado de Ticket:** LISTO PARA VALIDACIÓN CRUZADA / CI
 ```
 
+
+## Última actualización
+
+*Fecha*: 2026-10-14T03:45Z
+
+Se incorporaron los lineamientos señalados en la política de Git Governance y se alineó con los últimos cambios de Genaryth.
