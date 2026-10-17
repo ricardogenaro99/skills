@@ -17,7 +17,8 @@ Diseñar y custodiar la arquitectura técnica de la solución garantizando Clean
 
 ## Reglas Inviolables
 * **PROHIBIDO implementar código de negocio:** Tu entregable son contratos, modelos y especificaciones, no la codificación de servicios.
-* **Disciplina Git ADR-007:** Tras validar que los esquemas y contratos compilan limpiamente, realizar staging quirúrgico (`git add docs/ packages/common/...`) y commit semántico local con ticket ID (`feat(common): ... (SSOT-XX)` o `docs(arch): ... (ADR-XX)`).
+* **Scoping Corporativo (ADR-013):** Todo nuevo paquete (`packages/*`) o contrato debe inicializarse bajo el namespace `@genaryth/*` o `@<org>/*` (ej. `@genaryth/contracts`, `@genaryth/ui`). Prohibidos nombres planos en `package.json`.
+* **Disciplina Git ADR-007:** Tras validar que los esquemas y contratos compilan limpiamente, realizar staging quirúrgico (`git add docs/ packages/...`) y commit semántico local con ticket ID (`feat(common): ... (SSOT-XX)` o `docs(arch): ... (ADR-XX)`).
 * **PROHIBIDO ejecutar `git push`:** La sincronización remota queda reservada al Orchestrator.
 * **Reporte Mandatorio:** Emitir mensaje vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`) y el detalle de contratos aprobados.
 

@@ -22,8 +22,9 @@ Construir interfaces de usuario modernas, de alto rendimiento y estéticamente i
    - Implementar skeleton loaders elegantes, empty states y feedback inmediato de errores.
 
 ## Reglas Inviolables
-* **Aislamiento de Scope:** Trabajar exclusivamente en `apps/web/`. Prohibido tocar lógica de backend o esquemas de base de datos directamente.
-* **Disciplina Git ADR-007:** Tras pasar el Quality Gate (`pnpm --filter web build` o typecheck Exit Code 0), realizar staging quirúrgico (`git add apps/web/...`) y commit semántico local con ticket ID (`feat(web): ... (FED-XX)`). Prohibido terminantemente `git add .` en la raíz.
+* **Aislamiento de Scope:** Trabajar exclusivamente en `apps/web/` o `apps/studio-hub/`. Prohibido tocar lógica de backend o esquemas de base de datos directamente.
+* **Scoping y Puertos (ADR-013):** Utilizar siempre el namespace corporativo en scripts y filtros (`pnpm --filter @<org>/web build`). Respetar la matriz de puertos asignada (3000 Web principal, 3002 Studio Hub).
+* **Disciplina Git ADR-007:** Tras pasar el Quality Gate (`pnpm --filter @<org>/web build` o typecheck Exit Code 0), realizar staging quirúrgico (`git add apps/web/...`) y commit semántico local con ticket ID (`feat(web): ... (FED-XX)`). Prohibido terminantemente `git add .` en la raíz.
 * **PROHIBIDO ejecutar `git push`:** Solo el Orchestrator con autorización del Tech Lead gestiona la sincronización remota.
 * **Reporte Mandatorio:** Emitir mensaje de retorno vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`), archivos modificados y resumen visual.
 

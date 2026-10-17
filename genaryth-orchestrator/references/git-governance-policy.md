@@ -110,12 +110,26 @@ Al completar su tarea y generar el commit local, el subagente DEBE emitir inmedi
   - Build: ✅ Exit Code 0
   - Typecheck: ✅ Exit Code 0
   - Tests: ✅ [X]/[X] tests pasando limpiamente
+  - Local Harness: ✅ Exit Code 0 (cero secretos, cero colisiones de scope)
 - **Estado de Ticket:** LISTO PARA VALIDACIÓN CRUZADA / CI
 ```
 
+---
+
+## 🛡️ 5. Blindaje del Harness Local en Hooks Git (ADR-011 & ADR-013)
+
+1. **Pre-Commit Hook (`.husky/pre-commit`):**
+   - Ejecuta obligatoriamente `pnpm harness:check:staged`.
+   - Verifica que ningún secreto viaje en el commit (`blockSecretLeaks`).
+   - Verifica que los `package.json` en `apps/*` y `packages/*` no contengan nombres planos sin scope corporativo (`@genaryth/*` o `@<org>/*`).
+   - Verifica los límites arquitectónicos de dominio puro y fronteras RSC.
+2. **Pre-Push Hook (`.husky/pre-push`):**
+   - Intercepta pushes con $\ge 2$ commits acumulados hacia ramas de integración/producción (`develop`, `master`, `main`) para ofrecer unificación interactiva (`Squash`) o preservación granular supervisada.
+
+---
 
 ## Última actualización
 
-*Fecha*: 2026-10-14T03:45Z
+*Fecha*: 2026-10-17T11:45Z
 
-Se incorporaron los lineamientos señalados en la política de Git Governance y se alineó con los últimos cambios de Genaryth.
+Se integraron formalmente las directivas de **Scoping Corporativo (@<org>/*)** y **Segregación de Puertos Locales (ADR-013)**, junto con el **Local Project Harness Enforcer (ADR-011)** en el pipeline de hooks de Git.
