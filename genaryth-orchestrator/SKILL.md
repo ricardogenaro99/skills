@@ -160,7 +160,7 @@ El Orchestrator **no satura el contexto principal** intentando resolver todas la
 | **2** | **Backend & Architecture** | `BE-XX`<br>`SSOT-XX` | `apps/api/`<br>`packages/common/` | `pnpm --filter api test`<br>`pnpm --filter api build`<br>`tsc --noEmit` | `subagent-backend`<br>`subagent-architect` |
 | **3** | **DevOps, Cloud & CI/CD** | `OPS-XX`<br>`INF-XX` | `apps/api/infrastructure/`<br>`infra/`<br>`.github/` | `cdk synth`<br>`pnpm lint`<br>`docker compose config` | `subagent-devops`<br>`subagent-sre` |
 | **4** | **QA, Testing & Performance** | `QA-XX` | `apps/*/test/`<br>`apps/*/e2e/`<br>`tests/` | `pnpm test`<br>`npx playwright test` | `subagent-qa` |
-| **5** | **Frontend & UX** | `FED-XX`<br>`FE-XX`<br>`MOB-XX` | `apps/web/`<br>`apps/mobile/` | `pnpm --filter web build`<br>`pnpm --filter web lint` | `subagent-frontend`<br>`subagent-uiux`<br>`subagent-mobile` |
+| **5** | **Frontend & UX** | `FED-XX`<br>`FE-XX`<br>`MOB-XX` | `apps/web/`<br>`apps/studio-hub/`<br>`apps/mobile/` | Pipeline de 6 Fases (`impeccable`, `design-taste-frontend`, `ui-ux-pro-max`, `apple-design`, `emil-design-eng`, `gsap`, `vercel-react-best-practices`)<br>`pnpm --filter @<org>/web build`<br>`pnpm --filter @<org>/web lint` | `subagent-frontend`<br>`subagent-uiux`<br>`subagent-mobile` |
 | **6** | **Data, AI & Automations** | `DATA-XX`<br>`N8N-XX`<br>`EVT-XX` | `workflows/`<br>`packages/events/`<br>`apps/worker/` | Validación JSON Schema<br>Tests de integración | `subagent-automation`<br>`subagent-data-ai` |
 
 ### 🏢 Directiva Inmutable de Scoping Corporativo y Segregación de Puertos (ADR-013)

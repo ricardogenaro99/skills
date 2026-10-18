@@ -133,10 +133,13 @@ Ticket Asignado: [FED-12] — Rediseño del Centro de Control de Mascota & Apple
 Tech Lead & Managing Director: Ricardo Genaro
 Orquestador Asignador: Genaryth Delivery Orchestrator
 
-## 1. Postura Profesional de Consultoría
-- Aplicar estándares Quiet Liquid Luxury / Apple Craftsmanship.
-- Next.js 14 App Router: Server Components por defecto; 'use client' únicamente en formulario reactivo.
-- Cero 'any' en TypeScript; validación en cliente con React Hook Form y Zod.
+## 1. Postura Profesional de Consultoría & Pipeline Maestro (6 Fases)
+- **Fase 1 (Dirección & Propósito):** Modo `Persuade` vs `Operate`, Anti-slop layout asimétrico con whitespace generoso.
+- **Fase 2 (Tokens & Tipografía):** Display fonts (`Geist`, `Satoshi`, `Cabinet Grotesk`), mono para métricas, cero emojis (solo SVG a 1.5px), viewport `min-h-[100dvh]`.
+- **Fase 3 (Materiales & Física Táctil):** Fondos oscuros profundos (`#08090A`), `backdrop-blur-md`, interacción reactiva en `pointer-down` (`:active scale(0.98)`).
+- **Fase 4 (Refinamiento Invisible - Emil Kowalski):** Prohibido `transition: all`, principio de masa en modales (`scale(0.95) -> 1`), bordes sub-pixel y spotlight dinámico.
+- **Fase 5 (Motion Cinemático):** ScrollTrigger y useGSAP() a 60/120 fps en GPU (`transform`, `opacity`), cero layout thrashing.
+- **Fase 6 (Arquitectura Clean Code):** Server Components por defecto en layouts y vistas estáticas; 'use client' estrictamente en componentes hoja interactivos.
 
 ## 2. Requerimientos de la Tarea & Criterios BDD
 - Implementar PetControlCenter en apps/web/src/app/(dashboard)/pets/[id]/edit/page.tsx.

@@ -52,8 +52,9 @@ Genaryth organiza el trabajo concurrente en **6 Hilos Operativos Estándar**, ca
 | **Hilo 2: Backend & Architecture** | Tech Lead Backend / Architect | `BE-XX`, `SSOT-XX` | `apps/api/`, `packages/common/` | `pnpm --filter @<org>/api test`, `pnpm --filter @<org>/api build` | `feat(api): ... (BE-XX)`<br>`feat(common): ... (SSOT-XX)` |
 | **Hilo 3: DevOps, Cloud & CI/CD** | Cloud Architect | `OPS-XX`, `INF-XX` | `apps/*/infrastructure/`, `infra/`, `.github/`, `.genaryth/harness/` | `cdk synth`, `pnpm lint`, `pnpm harness:check` | `fix(infra): ... (OPS-XX)`<br>`ci(actions): ... (OPS-XX)` |
 | **Hilo 4: QA & Performance** | QA Automation Specialist | `QA-XX` | `apps/*/test/`, `apps/*/e2e/`, `tests/` | `pnpm test`, `npx playwright test` | `test(qa): ... (QA-XX)` |
-| **Hilo 5: Frontend & UX** | Senior Frontend Engineer | `FED-XX`, `FE-XX` | `apps/web/`, `apps/studio-hub/` | `pnpm --filter @<org>/web build`, `pnpm --filter @<org>/web lint` | `feat(web): ... (FED-XX)`<br>`ui(shop): ... (FED-XX)` |
+| **Hilo 5: Frontend & UX** | Senior Frontend Engineer | `FED-XX`, `FE-XX` | `apps/web/`, `apps/studio-hub/` | Pipeline de 6 Fases (`impeccable`, `design-taste-frontend`, `ui-ux-pro-max`, `apple-design`, `emil-design-eng`, `gsap`, `vercel-react-best-practices`)<br>`pnpm --filter @<org>/web build`<br>`pnpm --filter @<org>/web lint` | `feat(web): ... (FED-XX)`<br>`ui(shop): ... (FED-XX)` |
 | **Hilo 6: Data, AI & Automations** | Data & Automation Lead | `DATA-XX`, `N8N-XX`, `EVT-XX` | `workflows/`, `packages/events/`, `apps/worker/` | Validación JSON Schema, `n8n validate` | `feat(n8n): ... (N8N-XX)`<br>`feat(data): ... (DATA-XX)` |
+
 
 > [!IMPORTANT]
 > **ESTÁNDAR MONOREPO ADR-013:** Todo filtro `pnpm --filter` y dependencia interna `workspace:*` DEBE utilizar el scope corporativo `@genaryth/*` o `@<org>/*` (prohibidos nombres planos). Los scripts `"dev"` deben respetar la asignación de puertos canónicos (3000 Web, 3001 API, 3002 Studio Hub, 3003+ Ventures).

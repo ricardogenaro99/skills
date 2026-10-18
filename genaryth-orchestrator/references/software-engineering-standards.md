@@ -60,22 +60,68 @@ En todo microservicio o backend (NestJS, Node, Python):
 
 ---
 
-## 🎨 3. Arquitectura Frontend Moderna (Next.js App Router)
+## 🎨 3. Estándar Maestro de Frontend y Design Engineering (Pipeline de 6 Fases)
 
-1. **Separación Estricta Server vs. Client Components:**
-   - **Server Components por Defecto:** Todas las páginas (`page.tsx`), layouts y componentes de presentación estática o con fetch de datos son Server Components. Cero JavaScript bloqueante al cliente, máximo SEO y menor bundle size.
-   - **Client Components Quirúrgicos (`'use client'`):** Únicamente en los componentes hoja interactivos que manejan eventos de usuario (`onClick`, formularios, modales, animaciones con Framer Motion).
-2. **Formularios Tipados y Validación en Doble Capa:**
-   - Manejo de formularios mediante **React Hook Form**.
-   - Validación tipada unificada mediante esquemas **Zod** compartidos con el backend.
-3. **Manejo de Estados de UI Resilientes:**
-   - Toda vista con carga asíncrona DEBE contemplar los 4 estados canónicos:
-     1. `Loading` (Skeleton loaders elegantes, no spinners invasivos).
-     2. `Success` (Renderizado de datos con transiciones suaves).
-     3. `Empty State` (Ilustración o mensaje claro invitando a la acción).
-     4. `Error State` (Mensaje descriptivo y botón de reintento).
+A partir de la consagración del estándar institucional de diseño, todo desarrollo de interfaz, componente, vista o landing page en Genaryth DEBE regirse obligatoriamente bajo este pipeline secuencial. Queda **terminantemente prohibido generar interfaces genéricas de IA ("AI slop", plantillas planas de Bootstrap o componentes estándar sin intención)**. Todo código frontend debe ejecutarse encadenando las skills en este orden estricto:
+
+### 🌟 Fase 1: Dirección de Arte & Propósito (`impeccable` + `design-taste-frontend`)
+1. **Determinar el Modo de la Superficie:**
+   - `Persuade` (Landing pages, Venture Studio showcase): Diseño atrevido, foco en autoridad, conversión y diferenciación.
+   - `Operate` (Dashboards, herramientas internas, incubación): Escaneabilidad, densidad de información y cero distracciones.
+2. **Anti-Slop Policy (de `taste-skill`):**
+   - 🚫 **PROHIBIDO:** El layout cliché de IA consistente en titular centrado de 3 líneas con una fila de 3 tarjetas idénticas abajo.
+   - ✅ **OBLIGATORIO:** Asimetría intencional, espacios generosos (*whitespace* estructurado) y escala tipográfica de alto impacto visual.
+
+### 🔤 Fase 2: Sistema de Tokens & Tipografía (`ui-ux-pro-max` + `design-taste-frontend`)
+1. **Tipografía Display de Autor:**
+   - 🚫 **BANEADO:** Uso de `Inter` o fuentes genéricas para titulares principales.
+   - ✅ **OBLIGATORIO:** Tipografías con carácter display y tracking negativo agresivo (`Geist`, `Satoshi`, `Cabinet Grotesk`, `Plus Jakarta Sans` con `tracking-[-0.03em]` a `tracking-[-0.04em]`).
+   - Tipografía monoespaciada (`Geist Mono`, `JetBrains Mono`) reservada para SLAs, latencias (`<45ms`), métricas y telemetría de arquitectura.
+2. **Baneo Absoluto de Emojis:**
+   - 🚫 **PROHIBIDO:** Emojis en código, textos, botones, badges o estados.
+   - ✅ **OBLIGATORIO:** Exclusivamente iconos SVG vectoriales curados (`@phosphor-icons/react`, Radix Icons o Lucide) con `strokeWidth` estandarizado a `1.5px`.
+3. **Estabilidad de Viewport:**
+   - 🚫 **BANEADO:** `h-screen`.
+   - ✅ **OBLIGATORIO:** `min-h-[100dvh]` para evitar saltos o solapamientos con la barra de navegación en Safari iOS.
+
+### 💎 Fase 3: Materiales & Física Táctil (`apple-design`)
+1. **Materiales Translúcidos (Liquid Glass):**
+   - Fondos oscuros profundos (`#08090A` / `#0D0F12`), evitando el negro plano puro `#000000`.
+   - Capas con `backdrop-blur-md` y rellenos sutiles (`bg-white/[0.03]`).
+2. **Kill Latency (Respuesta Inmediata):**
+   - Todo botón y elemento interactivo debe responder en `pointer-down` (al presionar), no al soltar (`:active { transform: scale(0.98); }` con transición de 100ms).
+   - Movimientos gobernados por física de resortes (*springs* interruptibles que conservan el momentum del usuario).
+
+### ✨ Fase 4: Refinamiento Invisible (`emil-design-eng` - Emil Kowalski)
+1. **Eliminación de `transition: all`:**
+   - 🚫 **BANEADO:** `transition: all 300ms` (provoca jank y transiciones accidentales de layout).
+   - ✅ **OBLIGATORIO:** Especificar siempre la propiedad exacta (`transition-transform`, `transition-opacity`, `transition-colors`).
+2. **Principio de Masa:**
+   - Ningún elemento aparece de la nada: modales, dropdowns y popovers entran con `scale(0.95) -> scale(1)` y `opacity: 0 -> 1`.
+3. **Bordes Sub-Pixel:**
+   - Evitar sombras oscuras pesadas. Delimitar tarjetas con bordes ultrafinos translúcidos (`border border-white/[0.08] hover:border-white/[0.18]`).
+4. **Bento Grids con Efecto Spotlight:**
+   - Las tarjetas interactivas de portafolio o servicios deben incluir un resplandor radial dinámico que sigue las coordenadas del cursor (`onMouseMove`).
+
+### 🎬 Fase 5: Coreografía & Motion Cinemático (`gsap-scrolltrigger` + `gsap-react` / `animate`)
+1. **Animación al Scroll:**
+   - Emplear GSAP ScrollTrigger con el hook oficial `useGSAP()` para pinning de secciones, revelación de titulares con SplitText y scrubbing suave.
+2. **Rendimiento a 60/120 fps:**
+   - Animar exclusivamente mediante propiedades de GPU (`transform`, `opacity`) con `will-change: transform`.
+   - Cero *layout thrashing* o lecturas repetidas a `getBoundingClientRect` dentro de bucles de animación.
+
+### 🏗️ Fase 6: Arquitectura Clean Code (`vercel-react-best-practices`)
+1. **Arquitectura Next.js App Router:**
+   - Layouts y estructuras estáticas renderizadas como React Server Components (`RSC`).
+   - Interactividad, GSAP, Framer Motion y manejadores de eventos encapsulados estrictamente en componentes hoja con `'use client'`.
+2. **Verificación de Dependencias:**
+   - Verificar siempre `package.json` antes de importar paquetes (`@phosphor-icons/react`, `gsap`, `framer-motion`, `clsx`, `tailwind-merge`).
+3. **Formularios Tipados y Manejo de Estados Resilientes:**
+   - Formularios vía **React Hook Form** + esquemas **Zod** compartidos con `@<org>/contracts`.
+   - 4 estados canónicos en toda vista asíncrona: `Loading` (skeleton fino), `Success`, `Empty State` y `Error State` con botón de reintento.
 
 ---
+
 
 ## 📡 4. Contratos de API (Contract-First & OpenAPI SSOT)
 
