@@ -375,6 +375,7 @@ Cuando el Tech Lead o el cliente soliciten una modificación durante el ciclo de
 ## 📚 12. Compendio de Estándares Institucionales de Genaryth
 
 Todos los subagentes deben consultar y aplicar con rigor las referencias maestras del marco:
+* [organization-and-culture-standards.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/organization-and-culture-standards.md): Modelo Dual de Genaryth (Consultoría B2B + Venture Studio), embudo de incubación en 5 fases y soberanía del Tech Lead.
 * [lifecycle-gates.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/lifecycle-gates.md): Especificación de las 5 Puertas Decisionales y Orquestación Dual-Track.
 * [git-governance-policy.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/git-governance-policy.md): Política de Git Governance ADR-007 y Staging Quirúrgico.
 * [universal-agent-governance.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/universal-agent-governance.md): Tríada de Gobernanza Universal Multi-Agente (Symlinks SSOT GEMINI.md, CLAUDE.md, AGENTS.md, .cursorrules).

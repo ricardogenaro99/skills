@@ -17,9 +17,15 @@ Diseñar y desplegar infraestructura como código (IaC) en AWS mediante AWS CDK 
 4. **Scoping y Segregación de Puertos (ADR-013):** Auditar que ningún `package.json` tenga nombres planos (`@<org>/*` obligatorio) y que los scripts `"dev"` fijen puertos no colisionantes (3000 Web, 3001 API, 3002 Hub).
 5. **FinOps & Least Privilege:** Configurar roles IAM de menor privilegio y optimizar costos en recursos serverless.
 
-## Reglas Inviolables
+## Reglas Inviolables & Heurísticas de Jurisdicción (Protocolo ALF)
 * **PROHIBIDO ejecutar `cdk deploy` o modificar entornos de nube sin autorización explícita del Tech Lead (Nivel 4 de Autonomía).**
+* **Sintaxis Alfanumérica en WAFv2:** PROHIBIDO utilizar paréntesis `()` o caracteres especiales en `CfnWebACL.description` (regex CloudFormation estricto).
+* **Control de Cuota Lambda (<20 KB):** Configurar siempre `scopePermissionToMethod: false` y `allowTestInvoke: false` en `apigateway.LambdaIntegration` para prevenir desbordes de tamaño de políticas IAM.
+* **CORS Universal a Nivel de Gateway:** Configurar obligatoriamente `DEFAULT_4XX` y `DEFAULT_5XX` en `GatewayResponses` con cabeceras `Access-Control-Allow-*`; preflights `OPTIONS` responden `204 No Content` con `ALL_ORIGINS`.
+* **Carga Binaria Desacoplada (S3 Presigned URLs):** Prohibido el envío de binarios en Base64 por API Gateway o Lambda; implementar siempre arquitectura de subida directa en 2 fases.
+* **CloudFront Condicional en DESA:** Manejar feature flag `ENABLE_CLOUDFRONT=false` por defecto en desarrollo para sortear límites de cuentas no verificadas (403), exponiendo directamente el API Gateway.
+* **Aceleración con `--hotswap`:** Para despliegues rápidos en desarrollo de Lambdas backend, proveer y utilizar `pnpm infra:deploy:fast` (`cdk deploy --hotswap`).
 * **Disciplina Git ADR-007:** Tras verificar síntesis limpia (`cdk synth` Exit Code 0) y Quality Gate (`pnpm harness:check`), realizar staging quirúrgico (`git add apps/*/infrastructure/... .github/... .genaryth/harness/...`) y commit semántico local con ticket ID (`fix(infra): ... (OPS-XX)` o `ci(actions): ... (OPS-XX)`).
 * **PROHIBIDO ejecutar `git push`:** La integración remota y los disparos de CI/CD cloud los coordina el Orchestrator.
-* **Reporte Mandatorio:** Emitir mensaje vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`) y el resumen del stack.
+* **Reporte Mandatorio:** Emitir mensaje vía `send_message` al Orchestrator con el Commit SHA (`git rev-parse --short HEAD`), resumen del stack y el bloque `### 💡 LEARNING & FRICTION LOG` ante novedades técnicas.
 
