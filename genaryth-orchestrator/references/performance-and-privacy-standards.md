@@ -42,3 +42,30 @@ Diseñado para garantizar respuesta instantánea en cualquier vista pública, po
    - La revelación completa de datos personales o sensibles solo se permite si el recurso entra en un estado explícito de emergencia, consentimiento explícito auditado del titular o autorización RBAC de alto nivel.
 3. **Protección Criptográfica de Contraseñas:**
    - Almacenamiento de credenciales protegido obligatoriamente mediante algoritmos modernos de hashing con resistencia a GPU: **Argon2id** (estándar OWASP) o **bcrypt** con factor de coste $\ge 12$.
+
+---
+
+## 🖥️ 4. Resiliencia de Renderizado & Web APIs (Frontend & Cross-Browser)
+
+1. **Aislamiento de Canvas y APIs del DOM en SSR:**
+   - Librerías que acceden directamente a `window`, `document` o WebGL (como Leaflet, Mapbox, Three.js) provocan colapsos de hidratación (`window is not defined`) si se evalúan en el servidor.
+   - **Regla Inmutable:** Encapsular siempre en Client Islands importados dinámicamente:
+     `const DynamicMap = dynamic(() => import('./MapComponent'), { ssr: false });` combinado con comprobación de estado de montaje (`const [mounted, setMounted] = useState(false)`).
+2. **Optimización de LCP en Recursos Críticos:**
+   - La imagen del Hero o el recurso principal visible en el primer viewport DEBE incluir `priority={true}` y atributos de dimensionamiento responsivo (`sizes`).
+   - **Anti-Patrón:** Declarar `loading="lazy"` en la imagen del viewport inicial demorando el LCP más allá de los 2.5s.
+3. **Escape de Contextos de Apilamiento (Stacking Contexts & Portals):**
+   - Modales, menús desplegables y tooltips anidados dentro de contenedores con `backdrop-blur-*`, `transform` o `filter` quedan atrapados en el contexto de apilamiento local, ignorando valores de `z-index: 9999`.
+   - **Regla Inmutable:** Montar siempre modales y overlays interactivos en la raíz del DOM mediante `createPortal(children, document.body)`.
+4. **Peligro de Layout con Tailwind `space-y-*`:**
+   - La utilidad `space-y-*` inyecta un selector CSS directo `> :not([hidden]) ~ :not([hidden])`, agregando márgenes superiores inesperados a capas absolutas (resplandores, spotlights, overlays decorativos).
+   - **Regla Inmutable:** Prohibido usar `space-y-*` en contenedores con hijos `absolute`. Utilizar siempre `flex flex-col gap-*`.
+5. **Normalización Defensiva de Formularios en Safari iOS / WebKit:**
+   - Los elementos nativos `<select>` colapsan a alturas ilegibles (~28px) en iOS si no se fuerza su aspecto.
+   - **Regla Inmutable:** Aplicar siempre `appearance-none`, `WebkitAppearance: 'none'`, altura fija explícita (`h-12`) y un icono SVG de flecha anclado de forma absoluta (`pointer-events-none`).
+6. **Descargas Binarias Autenticadas:**
+   - El atributo nativo HTML `<a href="..." download>` no soporta el envío de cabeceras de autorización (`Authorization: Bearer <JWT>`). Si la ruta está protegida, el navegador descarga silenciosamente una respuesta JSON 401/403 con extensión de archivo corrupta.
+   - **Regla Inmutable:** Gestionar descargas protegidas mediante `fetch` autenticado con Bearer token, convirtiendo la respuesta a `Blob` y activando la descarga mediante `URL.createObjectURL(blob)`.
+7. **Preprocesamiento Numérico en Validadores Zod:**
+   - Los inputs HTML nativos de tipo número (`<input type="number">`) retornan strings vacíos `""` al borrarse o `NaN` en navegadores Safari, fallando la validación de `z.number()`.
+   - **Regla Inmutable:** Usar siempre `z.preprocess((val) => (val === '' || Number.isNaN(Number(val)) ? undefined : Number(val)), z.number())`.

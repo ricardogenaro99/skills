@@ -54,9 +54,22 @@ En todo microservicio o backend (NestJS, Node, Python):
    - Toda consulta autenticada sobre recursos de un usuario debe incluir explícitamente el tenant/propietario:
      `where: { id: petId, userId: currentUser.id }`.
    - Prohibido confiar ciegamente en IDs de la URL sin verificar que pertenezcan al usuario autenticado (prevención de vulnerabilidades BOLA/IDOR).
-3. **Migraciones Versionadas y Determinísticas:**
+3. **Migraciones Versionadas, Idempotentes y Determinísticas:**
    - Prohibido modificar esquemas de base de datos directamente en el motor.
    - Todo cambio de esquema se realiza vía archivos de migración rastreados en Git (`prisma migrate dev`).
+   - **Regla Inmutable DDL:** En bases de datos relacionales concurrentes (PostgreSQL / Aurora Serverless v2), las sentencias DDL manuales deben ser idempotentes: utilizar siempre `ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS` y `DROP TABLE IF EXISTS` para garantizar despliegues continuos sin tiempo de inactividad (*zero-downtime*).
+   - **Sincronización del Cliente ORM:** Tras modificar `schema.prisma`, es obligatorio ejecutar inmediatamente `prisma generate` para regenerar los tipos estáticos antes de correr suites de tests o typecheck.
+4. **Normalización Defensiva de Enums en PostgreSQL:**
+   - PostgreSQL es estrictamente sensible a mayúsculas/minúsculas en tipos enumerados (`CREATE TYPE status_enum AS ENUM ('ACTIVE', 'PENDING')`). Enviar `"active"` desde un cliente HTTP arroja un error 500 no controlado.
+   - **Regla Inmutable:** En la capa de aplicación/servicios, normalizar siempre todo valor de enum entrante con `.toUpperCase().trim()` antes de pasarlo a Prisma o a la capa de persistencia.
+5. **Telemetría Honesta en Agregaciones y Métricas:**
+   - Cuando una consulta agregada retorne cero filas o no existan datos históricos, el backend debe responder con valores reales: `null`, `0` o estado `Standby`.
+   - **Anti-Patrón Prohibido:** Retornar promedios artificiales fijos (*hardcoded dummy values* como `142ms` o `100% Health`) para simular salud operativa. La telemetría debe reflejar la verdad auditable del sistema.
+6. **Inyección Temprana de AWS Request ID & Salvaguarda Node.js 22+:**
+   - En funciones Lambda, capturar e inyectar `context.awsRequestId` en la primera línea de ejecución del handler en el logger estructurado para garantizar correlación de logs en CloudWatch (`[RequestId: ${requestId}]`).
+   - **Defensa ante strings literales en Node.js 22:** Validar `if (!requestId || requestId === 'undefined')` para prevenir registros basura con el texto literal `"undefined"`.
+7. **Resolución de Módulos NodeNext ESM en Paquetes Compartidos:**
+   - En monorepos configurados con TypeScript `"moduleResolution": "NodeNext"`, todas las importaciones relativas dentro de paquetes de contratos y utilidades (`packages/*`) deben declarar explícitamente la extensión `.js` (ej. `import { DTO } from "./dto.js";`), complementado con `resolve.extensionAlias` en Webpack/Next.js para resolución universal.
 
 ---
 
