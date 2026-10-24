@@ -102,3 +102,22 @@ Todo `subagent-devops` y `subagent-sre` que intervenga en la inicialización, sc
 - [ ] **Ventures Secundarias o Microfrontends (`apps/*`):** Deben utilizar puertos 3003 en adelante de manera secuencial y determinista.
 - [ ] **Verificación de Concurrencia:** Certificar que la ejecución simultánea (`pnpm dev` en la raíz vía Turborepo) no lance errores `EADDRINUSE`.
 
+---
+
+## 💻 5. Directiva de Infraestructura Local y Conciencia de Recursos de Máquina (Resource-Aware Policy — ADR-014)
+
+Todo `subagent-devops`, `subagent-architect` y `subagent-sre` que diseñe entornos de desarrollo local, contenedores Docker, herramientas CLI o scripts de inicialización DEBE cumplir obligatoriamente con el perfil de hardware de la estación de trabajo de **Ricardo Genaro (Mac mini / Apple Silicon, 16 GB RAM, ~20–30 GB de almacenamiento disponible)**:
+
+1. **Baneo de Suites Monolíticas y Emuladores Pesados:**
+   - **TERMINANTEMENTE PROHIBIDO:** Recomendar, configurar o incorporar `LocalStack`, emuladores locales pesados de AWS, o suites de contenedores que excedan 1 GB de descarga o consuman más de 1.5 GB de RAM.
+   - **Alternativa Canónica:** 
+     - Sintaxis de CloudFormation validada mediante `cdk synth` (cero coste, en memoria).
+     - Pruebas de integración de constructs mediante `@aws-cdk/assertions` (ejecución ultra-rápida con Jest/Vitest).
+     - Validación real contra cuentas sandbox/dev efímeras de AWS con cuotas controladas.
+2. **Política de Imágenes Docker Ultraligeras (Alpine-First):**
+   - Todo servicio de desarrollo local complementario (bases de datos, colas) debe utilizar imágenes mínimas `alpine` (ej. `redis:7-alpine`, imágenes oficiales de PostgreSQL optimizadas).
+   - Queda prohibido levantar bases de datos vectoriales gigantes o servidores LLM locales en Docker (tipo Ollama con modelos de 70B) que saturen la memoria RAM o el disco SSD.
+3. **Control y Auditoría de Volúmenes y Contenedores:**
+   - Todo `docker-compose.yml` provisto en repositorios de Genaryth debe incluir nombres de contenedores determinísticos (`local-<proyecto>-<servicio>`) para fácil inspección visual en `lazydocker` (`ld`).
+   - Los scripts de limpieza (`pnpm docker:clean`) deben eliminar volúmenes huérfanos para resguardar la cuota de disco disponible del equipo host.
+
