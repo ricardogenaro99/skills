@@ -183,3 +183,59 @@ Para erradicar conflictos de sockets concurrentes (`EADDRINUSE`) al arrancar el 
 1. Los scripts `dev` en los `package.json` respectivos DEBEN declarar explícitamente el flag de puerto (`-p <PORT>`) o respetar el fallback de variable de entorno sin colisionar con el puerto 3000 predeterminado de Next.js.
 2. Si un microfrontend o servicio backend intenta vincularse a un puerto ya reservado en la matriz, el Quality Gate local de DevOps rechazará la configuración.
 
+---
+
+## 🔑 6. Arquitectura de Claves Dual (Surrogate Key `id Int` + Natural Key `subId String`)
+
+1. **Problema de Rendimiento con UUIDs como PK Primaria:**
+   - Utilizar strings o UUIDs como clave primaria (`@id`) en bases de datos relacionales fragmenta los índices B-Tree de PostgreSQL, incrementa sustancialmente el tamaño de almacenamiento en disco, penaliza las operaciones de ordenamiento y desacelera drásticamente las consultas con `JOIN` sobre claves foráneas.
+2. **Patrón Canónico de Clave Dual en Prisma:**
+   - Todo modelo relacional de negocio en el ecosistema Genaryth debe implementar el patrón de clave dual:
+     ```prisma
+     model Issue {
+       id          Int      @id @default(autoincrement())
+       subId       String?  @unique @map("sub_id")
+       key         String   @unique
+       title       String
+       projectId   Int      @map("project_id")
+       project     StudioProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+       // ...
+     }
+     ```
+   - **Surrogate Key (`id Int`):** Entero autoincremental de 4 bytes utilizado exclusivamente para la integridad referencial física (`FOREIGN KEY`, relaciones entre tablas, índices B-Tree ultra-rápidos).
+   - **Natural Business Key (`subId String?` o `key String`):** Cadena semántica única (ej. `mst_type_story`, `init-kinpet`, `EPIC-01`) utilizada para exposición en contratos de API, URLs públicas, parámetros REST y constantes inmutables en código.
+3. **Resolución Transparente en Capa de Aplicación:**
+   - Los contratos TypeScript y adaptadores de datos deben soportar de forma isomórfica ambos tipos mediante `z.union([z.number(), z.string()])`, resolviendo internamente el ID numérico correspondiente antes de consultar la persistencia.
+
+---
+
+## 📐 7. Inmutabilidad del Orden Físico en PostgreSQL (`ordinal_position` DDL)
+
+1. **Comportamiento del Catálogo en PostgreSQL:**
+   - En PostgreSQL (`information_schema.columns`), el orden físico de las columnas (`ordinal_position`) queda inmutablemente sellado en la sentencia `CREATE TABLE` inicial.
+   - Ejecutar operaciones `ALTER TABLE ADD COLUMN` para insertar claves primarias (`id`) o identificadores de negocio (`subId`) añade físicamente las columnas al final de la tabla (ej. `ordinal_position = 16`), provocando que herramientas visuales de inspección de datos (DBeaver, TablePlus) oculten las columnas más críticas al final de la cuadrícula.
+2. **Regla de Reconstrucción Limpia en Entornos de Desarrollo:**
+   - Al refactorizar claves primarias o campos estructurales durante la fase de desarrollo, en lugar de acumular migraciones `ALTER TABLE` que deformen el orden visual, se debe ejecutar una reconstrucción limpia del schema:
+     ```sql
+     DROP SCHEMA genaryth CASCADE;
+     CREATE SCHEMA genaryth;
+     ```
+   - Ejecutar a continuación `pnpm db:push` para forzar que el DDL inicial fije:
+     - `ordinal_position = 1`: `id` (integer)
+     - `ordinal_position = 2`: `subId` o `key` (text)
+     - `ordinal_position >= 3`: atributos descriptivos de negocio.
+
+---
+
+## 🌱 8. Principio Clean Slate Seed vs. Fixtures Aisladas
+
+1. **Segregación Estricta entre Datos Maestros y Datos de Prueba:**
+   - **Anti-Patrón Prohibido:** Mezclar datos de prueba transaccionales (proyectos mock, épicas ficticias, tareas de demo) dentro del script canónico de semilla (`seed.ts`). Esto contamina la base de datos de desarrollo, arruina los Quality Gates de QA y exige limpiezas manuales constantes.
+2. **Composición Canónica de Scripts de Base de Datos:**
+   - **`pnpm db:seed` / `pnpm db:setup` (Clean Slate):** Siembra **exclusivamente** catálogos maestros y referencias inmutables del sistema (`MasterReference`). Tras su ejecución, las tablas transaccionales de negocio deben reportar exactamente **0 filas**.
+   - **`pnpm db:seed:fixtures` (Entorno Mock Opcional):** Script aislado (`seed-fixtures.ts`) que puebla datos transaccionales de ejemplo para pruebas de UI y workshops de diseño.
+   - **`pnpm db:clean` (Purga Transaccional):** Script para vaciar todas las tablas de negocio preservando intactos los catálogos de `MasterReference`.
+3. **Verificación Automatizada Post-Seed:**
+   - Toda suite de inicialización debe validar que `MasterReference` cuente con los registros canónicos completos y que ninguna tabla operativa contenga datos residuales no autorizados.
+
+
