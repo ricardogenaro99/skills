@@ -238,4 +238,36 @@ Para erradicar conflictos de sockets concurrentes (`EADDRINUSE`) al arrancar el 
 3. **Verificación Automatizada Post-Seed:**
    - Toda suite de inicialización debe validar que `MasterReference` cuente con los registros canónicos completos y que ninguna tabla operativa contenga datos residuales no autorizados.
 
+---
+
+## ⚡ 9. Patrones de Persistencia Serverless y Ciclo de Vida en NestJS
+
+1. **Regla de Oro de Inicialización Serverless (Anti-Patrón HTTP 502):**
+   - **Peligro Crítico:** Acoplar sentencias DDL manuales (`CREATE TABLE`, `CREATE TYPE`, `ensureSchemaAndSeed`), comprobaciones complejas de `information_schema` o sembrado de datos dentro del hook de ciclo de vida (`onModuleInit`) de NestJS (`PrismaService`).
+   - **Impacto Catastrófico:**
+     1. Provoca fallas intermitentes `HTTP 502 Bad Gateway` al despertar funciones AWS Lambda / Serverless Functions debido al tiempo de cold start y contención de conexiones.
+     2. Ejecutar DDL a través de connection poolers transaccionales (PgBouncer) bloquea conexiones y arroja errores fatales.
+     3. Rompe el principio de funciones serverless efímeras y stateless.
+   - **Regla Inmutable:** Queda **TERMINANTEMENTE PROHIBIDO** ejecutar DDL o seeds en el runtime de la aplicación. Todo cambio de esquema pertenece estrictamente al pipeline de despliegue y migración:
+     - Sincronización de esquema: `prisma db push` o `prisma migrate deploy`.
+     - Poblado de catálogos: `prisma db seed` o scripts de deployment aislados.
+     - En runtime (`onModuleInit`): Únicamente invocar `await this.$connect()` para verificar la conectividad con el motor de base de datos.
+
+2. **Estándar Prisma Dual-URL Connection Pattern (Neon / Supabase Pooling):**
+   - **Conflicto Técnico:** Los Connection Poolers (PgBouncer / Supavisor) optimizan miles de conexiones concurrentes en modo transacción, pero rechazan sentencias DDL, locks de migración o transacciones preparadas ejecutadas por Prisma CLI.
+   - **Regla Inmutable en `schema.prisma`:** Configurar siempre el patrón dual de URLs:
+     ```prisma
+     datasource db {
+       provider  = "postgresql"
+       url       = env("DATABASE_URL")
+       directUrl = env("DIRECT_URL")
+     }
+     ```
+   - **`DATABASE_URL` (Runtime / PgBouncer Pooler):**
+     - Subdominio `-pooler` en Neon (`...-pooler.c-13.us-east-1.aws.neon.tech/dbname?schema=myschema&sslmode=require`).
+     - Utilizado exclusivamente por la aplicación NestJS en ejecución (`PrismaService`) para maximizar el throughput y evitar el agotamiento de conexiones.
+   - **`DIRECT_URL` (Migraciones / Prisma CLI):**
+     - Endpoint directo sin pooler (`....c-13.us-east-1.aws.neon.tech/dbname?schema=myschema&sslmode=require`).
+     - Utilizado exclusivamente por Prisma CLI para `prisma db push`, `prisma migrate dev/deploy` y `prisma db seed`.
+
 

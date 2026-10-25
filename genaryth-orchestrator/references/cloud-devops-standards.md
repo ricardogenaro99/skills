@@ -193,4 +193,29 @@ Todo `subagent-devops`, `subagent-architect` y `subagent-sre` que diseñe entorn
      `name`, `version`, `private`, `description`, `author`, `license`, `engines`, `packageManager`, `main`, `types`, `files`, `scripts`, `dependencies`, `devDependencies`, `peerDependencies`.
    - Incluir siempre el bloque `engines` (`node: ">=20.0.0"`, `pnpm: ">=9.0.0"`) para asegurar paridad absoluta de versiones en tiempo de compilación.
 
+---
+
+## ⚡ 10. Topología Zero-Cost Serverless Direct Connect & FinOps Cloud ($0.00/mes)
+
+1. **Desacople Total de VPC y Eliminación de NAT Gateways en Entornos No Productivos:**
+   - **Problema de Coste Basal:** Provisionar Aurora Serverless v2 con ACUs mínimas continuas, NAT Gateways para subnets privadas y RDS Proxy genera un coste fijo inevitable de **\$380+ USD/mes** en AWS aun con tráfico cero.
+   - **Regla Inmutable (Topología Serverless Direct Connect):** En entornos de desarrollo y pruebas (`DESA`, `TEST`), desacoplar completamente la función Lambda Core de la VPC (`vpc: undefined`).
+   - La función Lambda se ejecuta en el tejido serverless multi-tenant nativo de AWS, conectándose directamente vía HTTPS e internet saliente a motores de base de datos PostgreSQL Serverless escalados a cero (como Neon o Supabase Cloud) a un coste basal de **$0.00/mes**.
+
+2. **Gobernanza de Secretos: AWS SSM Parameter Store Standard vs. AWS Secrets Manager:**
+   - **Fuga de Presupuesto FinOps:** `secretsmanager.Secret` factura \$0.40 USD/mes por secreto más costes por cada 10,000 llamadas API.
+   - **Regla Canónica:** Para llaves de firma JWT, variables de configuración cifradas y secretos estáticos de aplicación, utilizar **exclusivamente AWS Systems Manager (SSM) Parameter Store Standard** (`ssm.StringParameter` o `SecureString` standard):
+     - Coste por parámetro: **$0.00 USD/mes** (almacenamiento ilimitado hasta 10,000 parámetros estándar).
+     - Coste por llamadas API: **$0.00 USD** dentro de la cuota de throughput estándar.
+     - Permisos IAM mínimos: `jwtSecretParam.grantRead(this.apiLambda)`.
+
+3. **Resolución de Colisiones en CloudFormation por Recursos Retenidos (`RemovalPolicy.RETAIN`):**
+   - **Problema en Re-despliegues:** En stacks de producción (`PROD`), recursos críticos como Amazon S3 Buckets de assets multimedia (`KinpetAssetsBucket`) y tablas DynamoDB configuran `removalPolicy: RemovalPolicy.RETAIN` para prevenir pérdida accidental de datos. Si el stack CloudFormation se elimina o se despliega en una cuenta con recursos existentes, el despliegue falla con error `Resource already exists`.
+   - **Reglas Inmutables de Resiliencia en CDK:**
+     1. **Importación Dinámica o Fallback:** Si el bucket ya existe en la cuenta, el construct debe permitir reutilizar el recurso retenido existente (`s3.Bucket.fromBucketName(...)`) o parametrizar el nombre mediante override (`bucketNameOverride`).
+     2. **Fallback Dinámico de Cuenta AWS en Configuración:** En `config.ts`, nunca fijar IDs de cuenta AWS de forma estricta sin fallback dinámico. Utilizar:
+        `id: process.env.AWS_ACCOUNT_ID || '<DEFAULT_ACCOUNT_ID>'`
+        permitiendo despliegues limpios y reproducibles entre distintas cuentas corporativas de AWS sin modificar el código fuente del construct.
+     3. **Silenciamiento de Warnings Incompatibles:** Al utilizar `scopePermissionToMethod: false` en `apigateway.LambdaIntegration`, suprimir `allowTestInvoke: false` explícito para evitar advertencias de configuración redundante en CDK CLI.
+
 

@@ -14,6 +14,7 @@ import { resolve, join } from 'node:path';
 const GITHUB_ROOT = resolve(process.env.HOME || '', 'Documents/GitHub/ricardogenaro99');
 
 const REPOS = [
+  'skills',
   'kinpet',
   'genaryth',
   'sprintflow',

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project_id": "skills",
+  "version": "1.0.0",
+  "updated_at": "2026-10-25T04:16:30-05:00",
+  "governance": {
+    "framework": "Genaryth Venture Studio - Protocolo ALF (Agent Learning & Feedback)",
+    "curator": "Genaryth Delivery Orchestrator & Ricardo Genaro (Tech Lead)",
+    "storage_mode": "DUAL_TIER (Local Repo .genaryth/learnings.json + Obsidian Layer 3 mistakes.md)"
+  },
+  "heuristics": [
+    {
+      "id": "LRN-024",
+      "timestamp": "2026-10-25T04:16:30-05:00",
+      "hilo": "hilo_3_devops",
+      "area": "devops",
+      "ticket": "OPS-34",
+      "author": "subagent-devops",
+      "context": "Topología FinOps Serverless Zero-Cost y sustitución de VPC/Aurora en DESA",
+      "finding": "Provisionar Aurora Serverless v2 con ACUs continuas, NAT Gateways para subnets privadas y RDS Proxy genera un coste fijo de $380+ USD/mes en AWS aunque el tráfico sea nulo.",
+      "root_cause": "Componentes de VPC con facturación ininterrumpida por hora independiente del volumen de peticiones.",
+      "rule": "Para entornos no productivos (DESA/TEST), desacoplar la Lambda de la VPC ('vpc: undefined') conectándola por HTTPS directo a bases de datos serverless escaladas a cero (Neon / Supabase), y reemplazar AWS Secrets Manager ($0.40/mes) por AWS SSM Parameter Store Standard ($0.00/mes) para alcanzar un burn rate garantizado de exactamente $0.00/mes.",
+      "scope": "GLOBAL_AGENT"
+    },
+    {
+      "id": "LRN-025",
+      "timestamp": "2026-10-25T04:16:30-05:00",
+      "hilo": "hilo_2_backend",
+      "area": "backend",
+      "ticket": "BE-29",
+      "author": "subagent-backend",
+      "context": "Dual-URL Connection Pattern para Neon y PgBouncer en Prisma",
+      "finding": "Los Connection Poolers transaccionales (PgBouncer) optimizan la concurrencia pero rechazan sentencias DDL, locks de migración o transacciones preparadas de Prisma CLI.",
+      "root_cause": "Incompatibilidad entre modos de pooler transaccional y comandos DDL/migraciones que requieren conexión directa con soporte de variables de sesión.",
+      "rule": "Configurar siempre el patrón dual en schema.prisma: 'url = env(\"DATABASE_URL\")' apuntando al subdominio -pooler para runtime de NestJS, y 'directUrl = env(\"DIRECT_URL\")' al endpoint directo para Prisma CLI ('db push', 'migrate', 'seed').",
+      "scope": "GLOBAL_AGENT"
+    },
+    {
+      "id": "LRN-026",
+      "timestamp": "2026-10-25T04:16:30-05:00",
+      "hilo": "hilo_2_backend",
+      "area": "backend",
+      "ticket": "BE-30",
+      "author": "subagent-backend",
+      "context": "Prohibición de DDL sincrónico en lifecycle serverless (anti-patrón HTTP 502)",
+      "finding": "Acoplar lógica DDL ('CREATE TABLE', 'CREATE TYPE', 'ensureSchemaAndSeed') dentro del hook 'onModuleInit' de NestJS provoca fallas intermitentes HTTP 502 al despertar la Lambda y colisiones con PgBouncer.",
+      "root_cause": "La función Serverless debe ser completamente stateless e instanciarse en milisegundos; ejecutar DDL contra PgBouncer bloquea transacciones y degrada el cold start.",
+      "rule": "Prohibir terminantemente sentencias DDL manuales en el runtime de la aplicación. Toda sincronización de esquema y semilla debe ejecutarse exclusivamente durante el pipeline de despliegue ('prisma db push / migrate' y 'prisma db seed') a través de endpoints directos (DIRECT_URL).",
+      "scope": "GLOBAL_AGENT"
+    },
+    {
+      "id": "LRN-027",
+      "timestamp": "2026-10-25T04:16:30-05:00",
+      "hilo": "hilo_3_devops",
+      "area": "devops",
+      "ticket": "OPS-38",
+      "author": "subagent-devops",
+      "context": "Reutilización de buckets S3 retenidos en PROD y fallback dinámico de cuentas AWS",
+      "finding": "Al re-desplegar stacks CloudFormation de producción con buckets S3 retenidos (RemovalPolicy.RETAIN), el despliegue falla por conflicto de nombres si el bucket ya existe o si el ID de cuenta AWS está hardcodeado.",
+      "root_cause": "Políticas de retención de S3 que preservan recursos tras la eliminación de stacks y falta de parametrización dinámica en config.ts.",
+      "rule": "Permitir importación o override de buckets S3 existentes ('bucketNameOverride' / 'fromBucketName') y configurar fallback dinámico en config.ts ('process.env.AWS_ACCOUNT_ID || DEFAULT') para garantizar despliegues reproducibles sin colisiones de CloudFormation.",
+      "scope": "GLOBAL_AGENT"
+    }
+  ]
+}
