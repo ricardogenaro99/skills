@@ -88,16 +88,27 @@ Todo proyecto en Genaryth progresa a través de 5 puertas decisionales secuencia
 > Toda definición técnica debe esperar obligatoriamente al **Gate 3 (Architecture Review)** mediante un RFC formal.
 
 > [!IMPORTANT]
-> **DIRECTIVA FINOPS ZERO-COST BOOTSTRAP (POLÍTICA DE COSTO CERO EN MVP):**
-> Para todo nuevo producto o MVP del Venture Studio Genaryth, la arquitectura tecnológica propuesta por defecto en **Gate 3** debe cumplir con la directiva **"$0.00 USD/mes de costo fijo"**. Queda prohibido proponer stacks con cómputo 24/7 (como AWS ECS Fargate, RDS dedicado o ElastiCache) en fases iniciales. El orquestador debe estructurar arquitecturas Serverless sobre Free Tiers perpetuos (Vercel/Cloudflare Pages, Supabase/Neon Serverless Postgres, Cloudflare R2 con Zero Egress, Upstash Serverless Redis y pasarelas de pago sin costo mensual fijo). Solo se migrará a infraestructura dedicada si el Tech Lead aprueba explícitamente un presupuesto de escala en Gate 3.
+> **DIRECTIVA FINOPS & TAXONOMÍA DE COSTOS (ZERO-COST REAL VS ZERO-TO-LOW-COST):**
+> Para todo nuevo producto o MVP del Venture Studio Genaryth, la arquitectura tecnológica propuesta por defecto en **Gate 3** debe maximizar la eficiencia de costes erradicando infraestructura con cómputo 24/7 (como AWS ECS Fargate continuo, Aurora v2 sin auto-suspend, o NAT Gateways a $32/mes).
+> - **Pragmatismo FinOps:** Costes mínimos o residuales (ej. $1 a $5 USD anuales por volumen elástico o llamadas API mínimas) **NO deben ser un bloqueo dogmático** que descarte una arquitectura claramente superior en escalabilidad, velocidad de entrega o robustez.
+> - **Catalogación Obligatoria y Transparente:** Todo componente tecnológico evaluado en Gate 3 DEBE clasificarse con rigor en su RFC:
+>   1. **Zero-Cost Real ($0.00 USD Perpetuo):** Free Tiers perpetuos garantizados que nunca generan cobro residual (ej. Vercel Hobby base, Cloudflare Pages/Workers 100k req/día, Supabase Free Tier base, AWS Lambda 1M req/mes perpetuo, AWS SSM Parameter Store Standard).
+>   2. **Zero-to-Low-Cost (Freemium / Pay-as-you-grow con base $0):** Sin costo fijo basal, pero con eventuales cobros marginales (centavos o pocos dólares/año) tras expirar promociones de 12 meses (ej. API Gateway a $3.50/M tras el año 1, S3 storage tras año 1) o por volumen elástico incremental.
 
 > [!IMPORTANT]
 > **POLÍTICA DE ARQUEOLOGÍA Y PIVOT DESACOPLADO (CLEAN ARCHEOLOGY BOUNDARY):**
 > Cuando se realice una auditoría o ingeniería inversa sobre repositorios legacy, el workspace del proyecto legacy opera exclusivamente como biblioteca de lectura y extracción (**Read-Only**). Si de la auditoría se decide crear un nuevo producto o pivot (como de Quena a Toca), el nuevo producto **DEBE instanciarse en un directorio y repositorio independiente** con su propio `.genaryth/state.json` y su carpeta `docs/`, sin mezclar nunca la documentación del activo legacy con la del producto vivo.
 
 > [!NOTE]
-> **SELECCIÓN ADAPTATIVA DEL TECH STACK:**
-> Genaryth opera como un Venture Studio y Consultora Enterprise: el stack tecnológico **NO es un dogma rígido ni un molde único**. Se calibra y aprueba en **Gate 3** según los requerimientos del producto, time-to-market, integraciones corporativas y presupuesto FinOps. Una vez aprobado por Ricardo Genaro, el bloque `tech_stack` en `.genaryth/state.json` parametriza dinámicamente los linters, compiladores, comandos de test y rutas autorizadas en los Subagent Briefing Contracts.
+> **SELECCIÓN ADAPTATIVA DEL TECH STACK Y ANÁLISIS DE NECESIDAD Y ESCALABILIDAD (CERO DOGMA):**
+> Genaryth opera como un Venture Studio y Consultora Enterprise: el stack tecnológico **NO es un dogma rígido ni un molde único**.
+> 1. **Prohibición de Sesgo por Familiaridad:** El squad tiene prohibido cerrarse por inercia o comodidad a un único conjunto de herramientas (ej. solo AWS, solo Supabase, solo Vercel, solo NestJS o solo React) porque "es lo que ya hemos aplicado".
+> 2. **Evaluación de Necesidad y Escalabilidad por Frente:** El Orchestrator debe analizar y justificar la tecnología más adecuada para cada área específica:
+>    - **Frontend & Mobile:** Next.js, Remix, Astro, SvelteKit, Vite SPA, Flutter, React Native, etc.
+>    - **Backend & Edge:** Route Handlers, Hono, Express, NestJS, FastAPI, Go, Rust, Elixir, etc.
+>    - **Persistencia & Cache:** PostgreSQL relacional, SQLite distribuido (Turso), Redis serverless, DynamoDB, etc.
+> 3. **Topología de Repositorio y Arquitectura:** Evaluar objetivamente si la naturaleza del producto exige un **Monorepo** (Turborepo/pnpm con paquetes compartidos `@<org>/*`), un **Multi-repo** segregado, un **Monolito modular** o **Microservicios** independientes.
+> Una vez validado por Ricardo Genaro, el bloque `tech_stack` en `.genaryth/state.json` parametriza dinámicamente los linters, compiladores, comandos de test y rutas autorizadas en los Subagent Briefing Contracts.
 
 ---
 
