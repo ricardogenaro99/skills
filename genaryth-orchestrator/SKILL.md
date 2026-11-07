@@ -434,5 +434,42 @@ Para garantizar la fiabilidad industrial, seguridad de ejecución y eficiencia d
 - **Runner CLI Automatizado (`runner.ts` / `harness-cli.sh`):** Ejecutor autónomo que corre las suites en tiempo real, genera scorecards visuales en terminal y reportes Markdown en `evals/BENCHMARK_REPORT.md`.
 - **FinOps & Latency Tracking:** Monitorización continua del consumo de tokens y tiempo de inferencia para maximizar el ROI de los agentes autónomos.
 
+---
+
+## ⚡ 14. Directiva Maestra FinOps de CI/CD Minimalista & Local-First (ADR-022)
+
+> [!CAUTION]
+> **DESESTIMACIÓN DE CI/CD PROPIETARIO (PIPOS ARCHIVADO):**
+> Queda **TERMINANTEMENTE PROHIBIDO** proponer, diseñar o iniciar el desarrollo de herramientas, orquestadores o motores de CI/CD propietarios para uso interno de Genaryth.
+> - **Estado de PipOS:** Queda formalmente archivado y congelado en el backlog estratégico exclusivamente como una idea teórica de consultoría B2B para comercialización a terceros en fases avanzadas.
+> - **Principio Rector:** Genaryth no reinventa la rueda de infraestructura cuando existen soluciones estándar y gratuitas.
+
+### 🛡️ Los 5 Pilares de la Directiva FinOps de CI/CD Minimalista (ADR-022):
+
+1. **Pilar 1 (Local-First):**
+   - Todo testing pesado, linter, typecheck y compilación se valida localmente en la máquina del desarrollador antes de salir a la nube.
+   - Herramientas obligatorias: Titanium Local Runners (`node .genaryth/ci/runner.mjs`, `pnpm test`, `pnpm typecheck`, `pnpm lint`, hooks `pre-commit` y Quality Gates locales ADR-007 con Exit Code 0).
+2. **Pilar 2 (Cloud-Last & Zero-Waste):**
+   - **PROHIBIDO** configurar triggers `on: push` en ramas de trabajo (`feature/*`, `develop`) en repositorios privados.
+   - Los workflows de GitHub Actions se activan **EXCLUSIVAMENTE** ante:
+     - **Pull Requests hacia ramas protegidas (`main`/`master`)**.
+     - Ejecución manual bajo demanda (**`workflow_dispatch`**).
+   - *Objetivo:* Cero desperdicio de los 2,000 minutos mensuales gratuitos de GitHub Actions en builds transitorios o en progreso.
+3. **Pilar 3 (Cancelación Concurrente Inmediata):**
+   - Cláusula obligatoria de `concurrency` con `cancel-in-progress: true` en la cabecera de todo workflow en `.github/workflows/`:
+     ```yaml
+     concurrency:
+       group: ${{ github.workflow }}-${{ github.ref }}
+       cancel-in-progress: true
+     ```
+   - *Efecto:* Si un desarrollador o subagente envía un nuevo commit al PR mientras el runner remoto está ejecutándose, el build anterior se cancela al instante sin quemar minutos innecesarios.
+4. **Pilar 4 (Consolidación de Workflows):**
+   - **PROHIBIDA** la dispersión en múltiples workflows que repitan checkout, instalación de dependencias y setup de Node/Java.
+   - Máximo **1 workflow ligero y unificado por repositorio**, diseñado en matriz secuencial o paralela optimizada, con una duración objetivo estrictamente menor a **2 minutos**.
+5. **Pilar 5 (Fallback Self-Hosted Runner):**
+   - Si un proyecto del Venture Studio requiere cómputo intensivo, suites E2E extensas o tiempo ilimitado en repositorios privados que amenace la cuota gratuita, se debe emplear el **runner oficial gratuito de GitHub autohospedado en la Mac Mini (`actions-runner`)**.
+   - Garantiza cómputo local ilimitado a **\$0.00 USD/mes**, aprovechando el hardware Apple Silicon sin reinventar plataformas de CI/CD.
+
+
 
 
