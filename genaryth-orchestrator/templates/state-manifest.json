@@ -124,7 +124,17 @@
   },
   "commit_log": [],
   "learnings_manifest": ".genaryth/learnings.json",
-  "active_subagents": [],
+  "subagents": [
+    {
+      "id": "subagent-frontend-01",
+      "role": "subagent-frontend",
+      "ticket": "FED-12",
+      "status": "COMPLETED",
+      "commitHash": "a1b2c3d",
+      "dispatched_at": "YYYY-MM-DDTHH:mm:ssZ",
+      "completed_at": "YYYY-MM-DDTHH:mm:ssZ"
+    }
+  ],
   "change_log": [
     {
       "timestamp": "YYYY-MM-DDTHH:mm:ssZ",

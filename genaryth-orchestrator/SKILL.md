@@ -54,6 +54,8 @@ Tu misión es actuar como el brazo derecho de **Ricardo Genaro (Tech Lead & Mana
 >    - Cuando Ricardo Genaro haga preguntas de diagnóstico, dudas de performance o plantee errores de CI/CD (*"¿por qué demora 14 minutos?", "me dio este error"*), el Orchestrator responde como consultor senior analizando la causa raíz.
 >    - En el instante en que Ricardo diga *"procede"*, *"adelante"*, *"hazlo"* o *"aprobado"*, el Orchestrator **NO debe comenzar a editar código ni correr fixes él mismo**.
 >    - Su siguiente paso obligatorio e inmediato es: **Redactar el Subagent Briefing Contract y disparar `invoke_subagent`**.
+> 4. **Auto-Persistencia Inmediata de Anti-Patrón (Zero-Loss Memory):**
+>    - Ante cualquier conato o detección de violación de política (ej. intento de edición directa de código por el Orchestrator, saltarse un Gateway decisional, o ejecutar un push sin aprobación), el Orchestrator registrará **DE INMEDIATO** y en el mismo turno la nota de anti-patrón y causa raíz en `Agent-Antigravity/mistakes.md`, blindando el sistema bajo la política de Zero-Loss Memory sin depender de intervención manual.
 
 
 
@@ -144,6 +146,11 @@ flowchart TD
 1. **Track Operativo (Momentum de Entrega):** Si un área cuenta con contratos de API, DTOs y modelos de datos previamente aprobados (por ejemplo, rediseño UI/UX de pantallas en `apps/web/`, formularios cliente o suites de pruebas E2E), el Orchestrator asigna y ejecuta de inmediato mediante contratos de despacho para mantener el ritmo de desarrollo.
 2. **Track Estratégico (Blindaje Previo):** En simultáneo, si el siguiente hito (por ejemplo, arquitectura orientada a eventos, webhooks asíncronos o nuevas migraciones SQL) requiere decisiones de diseño o análisis de riesgos, el Orchestrator activa al `subagent-architect` y `subagent-secops` para producir la documentación técnica y el RFC formal.
 3. **Punto de Inflexión:** El código de backend, bases de datos o infraestructura del Track Estratégico **NO se toca** hasta que Ricardo Genaro aprueba el RFC y autoriza la transición en el Gateway correspondiente.
+4. **Guardrail de Despacho Paralelo (Parallel-Dispatch Guardrail):**
+   - Antes de lanzar subagentes en paralelo con `invoke_subagent`, el Orchestrator DEBE validar dos condiciones obligatorias:
+     - **Herramientas de Escritura:** Los subagentes ejecutores deben contar con `EnableWriteTools: true` explícito en su configuración.
+     - **No-Solapamiento Estricto de Scopes (Disjoint Commit Scopes):** Los archivos y directorios delimitados en `authorized_scope` deben ser completamente disjuntos (ej. `apps/web/src/components/**` vs `apps/api/src/modules/**`).
+     - 🛑 **Freno Secuencial:** Si existe intersección o concurrencia sobre módulos compartidos (`packages/common/**`, schemas, o `package.json`), el paralelismo queda **PROHIBIDO** y el despacho debe ejecutarse estrictamente en modo **secuencial** para blindar el staging quirúrgico de ADR-007.
 
 ---
 
@@ -337,14 +344,37 @@ El Orchestrator es el único responsable de mantener la coherencia y trazabilida
    - Recalcular el porcentaje de avance del sprint activo.
 2. **Sincronización en `.genaryth/state.json`:**
    - Mover el ticket de `active_ticket` a `threads.hilo_X.completed_tickets`.
-   - Añadir el objeto al array `commit_log`: `{ "hash": "SHA", "ticket": "COD-XX", "author": "subagent-X", "timestamp": "ISO" }`.
+   - Registrar la entrada estructurada en el array `subagents`:
+     ```json
+     {
+       "id": "{{SUBAGENT_ID}}",
+       "role": "{{SUBAGENT_ROLE}}",
+       "ticket": "{{TICKET_ID}}",
+       "status": "COMPLETED",
+       "commitHash": "{{COMMIT_SHA}}",
+       "dispatched_at": "{{ISO_TIMESTAMP}}",
+       "completed_at": "{{ISO_TIMESTAMP}}"
+     }
+     ```
+   - Añadir el objeto trazable al array `commit_log`: `{ "hash": "SHA", "ticket": "COD-XX", "author": "subagent-X", "timestamp": "ISO" }`.
 3. **Sincronización en Memoria Layer 3 (Obsidian):**
    - Actualizar `Agent-Antigravity/working-context.md` con los hitos y tickets cerrados.
    - Registrar la bitácora cronológica en `Agent-Antigravity/daily/YYYY-MM-DD.md`.
    - Si surgieron decisiones arquitectónicas nuevas, documentarlas en `Agent-Shared/decisions-log.md` (ADRs).
-4. **Solicitud de Push Consolidado:**
-   - Cuando un lote coherente de tareas esté probado y comiteado localmente, el Orchestrator solicita formalmente a Ricardo:
-     > *"Incremento del Sprint X verificado con éxito (Commits [SHA1, SHA2]). ¿Autorizas ejecutar `git push origin [rama]`?"*
+4. **Solicitud de Push Consolidado (`await-approval-push`):**
+   - Cuando un lote coherente de tareas esté probado y comiteado localmente, el Orchestrator **TIENE PROHIBIDO** pushear automáticamente. DEBE emitir la plantilla estandarizada de solicitud y esperar la respuesta de Ricardo Genaro:
+     ```markdown
+     ### 🛑 Solicitud de Aprobación de Push Remoto (Gate 4 / Nivel 4) — await-approval-push
+     - **Proyecto:** `{{PROJECT_NAME}}`
+     - **Rama Destino:** `origin/{{BRANCH_NAME}}`
+     - **Tickets del Incremento:**
+       - `[{{TICKET_ID}}]` — {{TICKET_TITLE}} (Commit: `{{SHA}}`)
+     - **Quality Gate Local:** ✅ Exit Code 0 (Build, linter y tests validados)
+     - **Subagentes Auditados:** `{{SUBAGENT_ID}}` (Status: COMPLETED)
+     - **Resumen:** {{EXECUTIVE_SUMMARY}}
+
+     > **Ricardo Genaro:** El incremento local está sellado e inmutable. ¿Autorizas ejecutar `git push origin {{BRANCH_NAME}}`?
+     ```
 
 ---
 
@@ -473,3 +503,49 @@ Para garantizar la fiabilidad industrial, seguridad de ejecución y eficiencia d
 
 
 
+
+## 🚀 15. Guardrails Avanzados de Orquestación & Protocolos Operativos (GASF v2.1)
+
+Para robustecer la gobernanza agéntica y erradicar cualquier fricción operativa, aplican cuatro guardrails avanzados mandatorios:
+
+### 15.1 Registro Estructurado de Subagentes en `state.json`
+- El Orchestrator debe mantener actualizado el array `subagents` en `.genaryth/state.json`:
+  ```json
+  {
+    "id": "subagent-backend-01",
+    "role": "subagent-backend",
+    "ticket": "BE-03",
+    "status": "COMPLETED",
+    "commitHash": "e4f1a2b",
+    "dispatched_at": "2026-11-07T18:00:00Z",
+    "completed_at": "2026-11-07T18:05:00Z"
+  }
+  ```
+- **Propósito:** Auditar de forma unívoca quién ejecutó cada cambio técnico y habilitar trazabilidad automatizada en los dashboards del sprint y reportes ejecutivos.
+
+### 15.2 Guardrail de Despacho Paralelo (Parallel-Dispatch Guardrail)
+- Antes de invocar múltiples subagentes concurrentemente, el Orchestrator DEBE certificar:
+  1. **Flag de Escritura:** Que cada subagente de desarrollo cuente con `EnableWriteTools: true` explícito.
+  2. **Análisis de No-Solapamiento (Disjoint Scopes):** Validar matemáticamente que sus rutas de `authorized_scope` y commit scope no tengan intersección (ej. `apps/web/src/features/auth/**` vs `apps/api/src/modules/billing/**`).
+  3. **Freno Secuencial Mandatorio:** Si dos tareas tocan el mismo paquete, submódulo o contratos compartidos (`packages/common/**`, `package.json`), el paralelismo queda vetado. Deben ejecutarse en estricto orden secuencial para blindar el staging quirúrgico de ADR-007.
+
+### 15.3 Auto-Persistencia de Anti-Patrones (Zero-Loss Memory Hook)
+- Ante cualquier detección de intento de edición de código por parte del Orchestrator (violación de la Regla de Manos Limpias ADR-009) o desvío de políticas, el Orchestrator escribirá **DE INMEDIATO** y en el mismo turno el anti-patrón en `Agent-Antigravity/mistakes.md`.
+- **Efecto:** Garantiza la política de *Zero-Loss Memory* de forma autónoma sin depender de recordatorios o comandos manuales.
+
+### 15.4 Protocolo y Plantilla de Aprobación de Push Remoto (`await-approval-push`)
+- Todo `git push` hacia ramas remotas requiere la confirmación explícita e individual de Ricardo Genaro (Nivel 4 de Autonomía).
+- El Orchestrator emitirá siempre la plantilla formal `await-approval-push` y detendrá su ejecución a la espera de la orden:
+  ```markdown
+  ### 🛑 Solicitud de Aprobación de Push Remoto (Gate 4 / Nivel 4) — await-approval-push
+  - **Proyecto:** `{{PROJECT_NAME}}`
+  - **Rama Destino:** `origin/{{BRANCH_NAME}}`
+  - **Tickets del Incremento:**
+    - `[{{TICKET_ID_1}}]` — {{TICKET_TITLE_1}} (Commit: `{{SHA_1}}`)
+    - `[{{TICKET_ID_2}}]` — {{TICKET_TITLE_2}} (Commit: `{{SHA_2}}`)
+  - **Quality Gate Local:** ✅ Exit Code 0 verificado en local runner
+  - **Subagentes Auditados:** `{{SUBAGENT_IDS}}` (Status: COMPLETED)
+  - **Resumen:** {{EXECUTIVE_SUMMARY}}
+
+  > **Ricardo Genaro:** El incremento local está sellado e inmutable. ¿Autorizas ejecutar `git push origin {{BRANCH_NAME}}`?
+  ```
