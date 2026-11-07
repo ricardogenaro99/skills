@@ -80,6 +80,18 @@ Todo proyecto en Genaryth progresa a través de 5 puertas decisionales secuencia
 4. **GATE 4: PLAN_REVIEW:** Desglose granular de tareas con códigos trazables (`BE-XX`, `FED-XX`, `OPS-XX`, `QA-XX`) y alcance autorizado (`authorized_scope`) en `docs/SPRINT_BOARD.md`.
 5. **GATE 5: ACCEPTANCE_REVIEW:** Evidencias verificables de tests unitarios (100% pasando), suites E2E Playwright, auditorías de accesibilidad (a11y) y Core Web Vitals (< 1.5s).
 
+> [!CAUTION]
+> **REGLA DE INMUTABILIDAD DE FASES (NO TECHNICAL COMMITMENT BEFORE GATE 3):**
+> En **Gate 1 (Business Review)** y **Gate 2 (Requirements Review)**, queda **TERMINANTEMENTE PROHIBIDO** definir, preseleccionar o escribir en `.genaryth/state.json` frameworks de frontend, runtimes de backend, ORMs o motores de base de datos específicos. El foco de Gate 1 es 100% comercial y modelo de negocio; el foco de Gate 2 es 100% historias BDD y reglas de negocio funcionales. Toda definición técnica debe esperar obligatoriamente al **Gate 3 (Architecture Review)**.
+
+> [!IMPORTANT]
+> **DIRECTIVA FINOPS ZERO-COST BOOTSTRAP (POLÍTICA DE COSTO CERO EN MVP):**
+> Para todo nuevo producto o MVP del Venture Studio Genaryth, la arquitectura tecnológica propuesta por defecto en **Gate 3** debe cumplir con la directiva **"$0.00 USD/mes de costo fijo"**. Queda prohibido proponer stacks con cómputo 24/7 (como AWS ECS Fargate, RDS dedicado o ElastiCache) en fases iniciales. El orquestador debe estructurar arquitecturas Serverless sobre Free Tiers perpetuos (Vercel/Cloudflare Pages, Supabase/Neon Serverless Postgres, Cloudflare R2 con Zero Egress, Upstash Serverless Redis y pasarelas de pago sin costo mensual fijo). Solo se migrará a infraestructura dedicada si el Tech Lead aprueba explícitamente un presupuesto de escala en Gate 3.
+
+> [!IMPORTANT]
+> **POLÍTICA DE ARQUEOLOGÍA Y PIVOT DESACOPLADO (CLEAN ARCHEOLOGY BOUNDARY):**
+> Cuando se realice una auditoría o ingeniería inversa sobre repositorios legacy, el workspace del proyecto legacy opera exclusivamente como biblioteca de lectura y extracción (**Read-Only**). Si de la auditoría se decide crear un nuevo producto o pivot (como de Quena a Toca), el nuevo producto **DEBE instanciarse en un directorio y repositorio independiente** con su propio `.genaryth/state.json` y su carpeta `docs/`, sin mezclar nunca la documentación del activo legacy con la del producto vivo.
+
 > [!NOTE]
 > **SELECCIÓN ADAPTATIVA DEL TECH STACK:**
 > Genaryth opera como un Venture Studio y Consultora Enterprise: el stack tecnológico **NO es un dogma rígido ni un molde único**. Se calibra y aprueba en **Gate 3** según los requerimientos del producto, time-to-market, integraciones corporativas y presupuesto FinOps. Una vez aprobado por Ricardo Genaro, el bloque `tech_stack` en `.genaryth/state.json` parametriza dinámicamente los linters, compiladores, comandos de test y rutas autorizadas en los Subagent Briefing Contracts.

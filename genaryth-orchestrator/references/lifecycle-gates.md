@@ -17,6 +17,10 @@
 * **Pregunta de Decisión al Tech Lead:** *¿Se aprueba el alcance de negocio y la propuesta estratégica para proceder con el levantamiento de requerimientos detallados?*
 * **Condición de Bloqueo:** PROHIBIDO redactar Historias de Usuario o diseñar arquitectura técnica si Gate 1 no está en estado `APPROVED`.
 
+> [!CAUTION]
+> **REGLA DE INMUTABILIDAD DE FASES (NO TECHNICAL COMMITMENT IN GATE 1):**
+> Queda **TERMINANTEMENTE PROHIBIDO** definir o escribir en `state.json` frameworks de frontend, runtimes de backend, ORMs o bases de datos en esta fase. El foco es 100% oportunidad comercial, viabilidad de mercado y dolor del cliente.
+
 ---
 
 ## 🚪 GATE 2: REQUIREMENTS_REVIEW (Puerta de Requerimientos & Criterios)
@@ -33,6 +37,10 @@
 * **Pregunta de Decisión al Tech Lead:** *¿Se aprueban los requerimientos funcionales y criterios de aceptación para proceder con el diseño de arquitectura y contratos?*
 * **Condición de Bloqueo:** PROHIBIDO modelar bases de datos ni endpoints si Gate 2 no está en estado `APPROVED`.
 
+> [!CAUTION]
+> **REGLA DE INMUTABILIDAD DE FASES (NO TECHNICAL COMMITMENT IN GATE 2):**
+> Queda **TERMINANTEMENTE PROHIBIDO** comprometer decisiones técnicas, preseleccionar frameworks o registrar tecnologías en `state.json`. El foco de Gate 2 es 100% historias BDD y reglas de negocio funcionales. Toda definición técnica debe esperar obligatoriamente a Gate 3.
+
 ---
 
 ## 🚪 GATE 3: ARCHITECTURE_REVIEW (Puerta de Arquitectura, Contratos & Seguridad)
@@ -46,6 +54,20 @@
   - Modelos de Datos / DER relacional o esquemas NoSQL.
   - Registro de Decisiones de Arquitectura (ADRs) con alternativas evaluadas y pros/contras.
   - Threat Modeling preliminar y matriz de seguridad OWASP.
+
+> [!IMPORTANT]
+> **DIRECTIVA FINOPS ZERO-COST BOOTSTRAP (POLÍTICA DE COSTO CERO EN MVP):**
+> Para todo nuevo producto o MVP del Venture Studio Genaryth, la arquitectura tecnológica propuesta por defecto en **Gate 3** debe cumplir estrictamente con la directiva **"$0.00 USD/mes de costo fijo"**.
+> - **Prohibido:** Proponer stacks con cómputo o infraestructura 24/7 (como AWS ECS Fargate, RDS dedicado o ElastiCache) en fases iniciales.
+> - **Mandatario:** Estructurar arquitecturas Serverless sobre Free Tiers perpetuos (Vercel/Cloudflare Pages, Supabase/Neon Serverless Postgres, Cloudflare R2 con Zero Egress, Upstash Serverless Redis y pasarelas de pago sin costo mensual fijo).
+> - **Excepción:** Solo se migrará a infraestructura dedicada o aprovisionada si Ricardo Genaro (Tech Lead) aprueba explícitamente un presupuesto de escala en Gate 3.
+
+> [!IMPORTANT]
+> **POLÍTICA DE ARQUEOLOGÍA Y PIVOT DESACOPLADO (CLEAN ARCHEOLOGY BOUNDARY):**
+> Cuando se realice una auditoría o ingeniería inversa sobre repositorios legacy:
+> 1. El workspace del proyecto legacy opera estrictamente como biblioteca de lectura y extracción (**Read-Only**).
+> 2. Si de la auditoría se decide crear un nuevo producto o pivot (como la evolución de Quena a Toca), el nuevo producto **DEBE instanciarse en un directorio y repositorio independiente**.
+> 3. El nuevo producto debe contar con su propio `.genaryth/state.json` y su carpeta `docs/`, sin mezclar jamás la documentación o deuda del activo legacy con la del producto vivo.
 
 * **Criterios de Calidad:**
   - Separación de responsabilidades clara (Clean Architecture / Hexagonal).
