@@ -35,7 +35,7 @@ EOF
 check_tf_drift() {
   cd "$REPO_DIR"
   local tf_files
-  tf_files=$(git diff --name-only "$BASE_BRANCH"...HEAD -- "*.tf" "schemas/*" 2>/dev/null || true)
+  tf_files=$(git diff --name-only "$BASE_BRANCH" -- "*.tf" "schemas/*" 2>/dev/null || true)
   if [ -n "$tf_files" ]; then
     echo -e "${RED}⚠️  ¡ALERTA DE INFRAESTRUCTURA DETECTADA (IaC)!${NC}"
     echo -e "${YELLOW}Se detectaron cambios en archivos de Terraform o Schemas en tu rama:${NC}"
@@ -173,6 +173,10 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # 5. Prepare build prerequisites
+START_TIME=$(date +%s)
+START_FMT=$(date "+%Y-%m-%d %H:%M:%S")
+echo -e "${BLUE}⏱️  Hora de inicio: ${START_FMT}${NC}"
+
 echo -e "${BLUE}📥 [1/5] Descargando licencia Camunda de SSM...${NC}"
 aws ssm get-parameter --name "/CAMUNDA/LICENSE" --with-decryption --query "Parameter.Value" --output text --region "$REGION" > camunda-license.txt
 
@@ -184,8 +188,12 @@ fi
 # Multi-arch patch for Dockerfile on Mac Apple Silicon
 sed -i '' 's/FROM maven:3.9.8-eclipse-temurin-17-alpine AS build/FROM --platform=$BUILDPLATFORM maven:3.9.8-eclipse-temurin-17 AS build/' Dockerfile
 
+# BuildKit Maven cache mount to reuse downloaded dependencies across builds (~14m -> ~30s)
+sed -i '' 's|RUN mvn -f /home/app/pom.xml|RUN --mount=type=cache,target=/root/.m2/repository mvn -f /home/app/pom.xml|' Dockerfile
+
 # 6. Build Docker image
-echo -e "${BLUE}🐳 [3/5] Construyendo imagen Docker (linux/amd64)...${NC}"
+echo -e "${BLUE}🐳 [3/5] Construyendo imagen Docker (linux/amd64 con BuildKit cache)...${NC}"
+export DOCKER_BUILDKIT=1
 docker build --platform linux/amd64 \
   -t "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}:1.0.0" \
   -t "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}:latest" .
@@ -204,7 +212,16 @@ aws ecs update-service \
   --force-new-deployment \
   --region "$REGION" > /dev/null
 
+END_TIME=$(date +%s)
+END_FMT=$(date "+%Y-%m-%d %H:%M:%S")
+DURATION=$((END_TIME - START_TIME))
+MINUTES=$((DURATION / 60))
+SECONDS=$((DURATION % 60))
+
 echo -e "\n${GREEN}======================================================${NC}"
 echo -e "${GREEN}🎉 ¡Despliegue local enviado exitosamente a ECS TEST! ${NC}"
+echo -e "${GREEN}⏱️  Hora de inicio: ${START_FMT}${NC}"
+echo -e "${GREEN}⏱️  Hora de fin:    ${END_FMT}${NC}"
+echo -e "${GREEN}⌛  Tiempo total:   ${MINUTES}m ${SECONDS}s${NC}"
 echo -e "${GREEN}======================================================${NC}"
 echo "Para monitorear el rollout ejecuta: $(basename "$0") --status"
