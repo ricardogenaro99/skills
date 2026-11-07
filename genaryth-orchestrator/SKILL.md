@@ -61,21 +61,34 @@ Tu misión es actuar como el brazo derecho de **Ricardo Genaro (Tech Lead & Mana
 
 ---
 
-## 🚪 2. El Ciclo de Vida y las 5 Puertas Decisionales (Gateways)
+## 🚪 2. El Ciclo de Vida y las Puertas Decisionales (Gateways)
 
-Todo proyecto en Genaryth progresa a través de 5 puertas decisionales secuenciales. Cada transición de fase requiere un dictamen de aprobación formal:
+Todo proyecto en Genaryth progresa a través de compuertas secuenciales obligatorias. Antes de iniciar cualquier flujo ágil, es mandatorio resolver la identidad del workspace:
 
 ```
-[DISCOVERY] ──> GATE 1: BUSINESS_REVIEW ──(Aprobado)──>
-[REQUIREMENTS] ──> GATE 2: REQUIREMENTS_REVIEW ──(Aprobado)──>
-[ARCHITECTURE] ──> GATE 3: ARCHITECTURE_REVIEW ──(Aprobado)──>
-[PLANNING] ──> GATE 4: PLAN_REVIEW ──(Aprobado)──>
-[IMPLEMENTATION] ──> [VALIDATION] ──> GATE 5: ACCEPTANCE_REVIEW ──(Aprobado)──> [DEPLOYMENT]
+[ENVIRONMENT]   ──> GATE 0: WORKSPACE_IDENTITY ──(Clasificado)──>
+[DISCOVERY]     ──> GATE 1: BUSINESS_REVIEW     ──(Aprobado)──>
+[REQUIREMENTS]  ──> GATE 2: REQUIREMENTS_REVIEW ──(Aprobado)──>
+[ARCHITECTURE]  ──> GATE 3: ARCHITECTURE_REVIEW ──(Aprobado)──>
+[PLANNING]      ──> GATE 4: PLAN_REVIEW         ──(Aprobado)──>
+[IMPLEMENTATION]──> GATE 5: ACCEPTANCE_REVIEW   ──(Aprobado)──> [DEPLOYMENT]
 ```
 
 * Consulta la especificación detallada en [lifecycle-gates.md](file:///Users/ricardogenaro1999/.agents/skills/genaryth-orchestrator/references/lifecycle-gates.md).
 
-### Resumen de Puertas de Control:
+### 🔍 GATE 0: WORKSPACE_IDENTITY (Determinación Obligatoria de Entorno)
+Antes de planificar sprints, ejecutar comandos o despachar subagentes, el Orchestrator DEBE clasificar el tipo de repositorio según la evidencia física en disco:
+
+| Tipo de Workspace | Evidencia en Disco | Modo de Operación | Acciones Bloqueadas / Prohibidas |
+| :--- | :--- | :--- | :--- |
+| **`KNOWLEDGE_AND_SKILLS`** | No existe `package.json` en raíz; solo directorios de skills, reglas o documentación. | **Biblioteca de Habilidades:** Tareas limitadas a editar documentación, prompts o código interno de cada skill. | 🚫 Prohibido crear `docs/SPRINT_BOARD.md` o `.genaryth/state.json` en raíz.<br>🚫 Prohibido ejecutar `pnpm test/typecheck` en raíz. |
+| **`MONOREPO_APPLICATION`** | Presencia de `pnpm-workspace.yaml`, `apps/` y `packages/`. | **Venture Studio Monorepo:** Orquestación Dual-Track completa (Gate 1 a Gate 5). | 🚫 Hands-Off Code: Prohibido tocar código de apps en hilo principal. |
+| **`STANDALONE_SERVICE`** | Presencia de `package.json`, `pom.xml` o `go.mod` en la raíz (microservicio individual). | **Servicio Aislado:** Quality Gates y testing ejecutados exclusivamente dentro de su runtime específico. | 🚫 Prohibido asumir flags de monorepo (`--filter`). |
+| **`OBSIDIAN_VAULT`** | Rutas bajo `Agent-Antigravity/` o bóveda de iCloud. | **Memoria Layer 3:** Persistencia de lecciones, working-context y daily logs. | 🚫 Prohibido compilar código o crear ramas Git ajenas. |
+
+---
+
+### Resumen de Puertas de Control (Gates 1 al 5):
 1. **GATE 1: BUSINESS_REVIEW:** Oportunidad comercial, dolor del cliente y ROI validados en `docs/CONTEXTO_MAESTRO.md` o `docs/BUSINESS_OPPORTUNITY.md`.
 2. **GATE 2: REQUIREMENTS_REVIEW:** Historias de Usuario con sintaxis BDD (*Given-When-Then*), casos límite y SLAs sellados en `docs/PRODUCT_SPEC_V1.md`.
 3. **GATE 3: ARCHITECTURE_REVIEW:** Clean Architecture, **Selección Justificada del Tech Stack (RFC de Stack: NestJS vs Express vs FastAPI vs Go, Next.js vs Angular vs React, AWS vs GCP vs Azure vs Firebase)**, esquemas relacionales (DER) o NoSQL, contratos OpenAPI 3.1 SSOT (`docs/openapi.json`), ADRs y Threat Modeling OWASP.
