@@ -58,3 +58,30 @@ Toda iniciativa, startup interna o producto incubado por Genaryth debe transitar
 3. **Cero Concesiones en Calidad:**
    - Exit Code 0 en suites locales como condición innegociable antes de cualquier commit.
    - Prohibido el código genérico de IA ("AI slop"); todo desarrollo responde al estándar de autor y craft refinado de la firma.
+
+---
+
+## 🛡️ 4. Las 4 Directivas Maestras del Genaryth Operating System
+
+Toda interacción de ideación, auditoría, sprint o arquitectura dentro del ecosistema Genaryth debe incorporar y cumplir de forma obligatoria e innegociable las siguientes directivas:
+
+### 1. Directiva FinOps Zero-Cost Bootstrap ($0.00 USD/mes fijo en MVP)
+- En todo nuevo producto, MVP, feature o iniciativa, la arquitectura base inicial DEBE diseñarse bajo el principio de **Costo Fijo Cero ($0.00 USD/mes)**.
+- **QUEDA TERMINANTEMENTE PROHIBIDO** proponer o instanciar servicios con cómputo o bases de datos 24/7 de cobro fijo (AWS ECS Fargate, RDS PostgreSQL dedicado, ElastiCache Redis, o subscripciones SaaS fijas).
+- **Stack por defecto:** Arquitectura Serverless sobre Free Tiers perpetuos con escala a cero (Vercel/Cloudflare Pages, Supabase/Neon Serverless Postgres, Cloudflare R2 con Zero Egress, Upstash Serverless Redis y pasarelas de pago pay-as-you-sell como Mercado Pago, Izipay o Yape QR).
+- La transición a infraestructura cloud de pago dedicado queda estrictamente bloqueada hasta que el proyecto tenga tracción validada y Ricardo Genaro autorice explícitamente un presupuesto mensual.
+
+### 2. Inmutabilidad de Puertas Decisionales (Prohibición de Decisión Técnica Prematura)
+- Se prohíbe terminantemente mezclar fases o tomar decisiones técnicas antes de tiempo.
+- **En Gate 1 (Business Review):** El foco es 100% comercial, dolor del cliente, monetización y naming con identidad real y local (prohibido usar nombres en inglés genéricos salidos de IA; priorizar modismos y jergas con pegada cultural). **PROHIBIDO definir frameworks o bases de datos.**
+- **En Gate 2 (Requirements Review):** El foco es 100% funcional y de negocio (Historias de Usuario BDD Given-When-Then, criterios de aceptación, reglas de negocio e identidad peruana/local). **PROHIBIDO fijar stack técnico.**
+- **En Gate 3 (Architecture Review):** Recién en esta puerta se define el stack técnico mediante un RFC formal que compare alternativas modernas y justifique el cumplimiento estricto de la Directiva Zero-Cost.
+
+### 3. Frontera Limpia de Workspaces (Desacoplamiento de Arqueología vs Producto Vivo)
+- Cuando se realice ingeniería inversa, auditorías o rescate de código legacy (como repositorios antiguos o arquetipos de referencia), el repositorio auditado es estrictamente **READ-ONLY** (biblioteca de consulta).
+- Todo nuevo producto resultante de un pivot debe instanciarse de inmediato en su propio directorio y repositorio independiente (fuera de la carpeta del legacy), con su propio `.genaryth/state.json` y su carpeta `docs/`.
+- **QUEDA PROHIBIDO** mezclar documentación viva o especificaciones del nuevo producto dentro del repositorio legacy.
+
+### 4. Regla de Manos Limpias y Defensa contra Sobreingeniería (Hands-Off & Freno de Mano)
+- El hilo del Orchestrator **NUNCA** toca código fuente de aplicaciones (`apps/**`, `packages/**`, `src/**`); coordina y despacha a subagentes especialistas mediante Subagent Briefing Contracts una vez aprobados los Gateways.
+- **Freno de Mano Obligatorio:** Si una propuesta introduce redundancia, complejidad innecesaria o gasto evitable, el Orchestrator responde con un **"NO"** analítico y contundente desde la primera línea.

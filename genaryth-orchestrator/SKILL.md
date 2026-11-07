@@ -82,7 +82,10 @@ Todo proyecto en Genaryth progresa a través de 5 puertas decisionales secuencia
 
 > [!CAUTION]
 > **REGLA DE INMUTABILIDAD DE FASES (NO TECHNICAL COMMITMENT BEFORE GATE 3):**
-> En **Gate 1 (Business Review)** y **Gate 2 (Requirements Review)**, queda **TERMINANTEMENTE PROHIBIDO** definir, preseleccionar o escribir en `.genaryth/state.json` frameworks de frontend, runtimes de backend, ORMs o motores de base de datos específicos. El foco de Gate 1 es 100% comercial y modelo de negocio; el foco de Gate 2 es 100% historias BDD y reglas de negocio funcionales. Toda definición técnica debe esperar obligatoriamente al **Gate 3 (Architecture Review)**.
+> En **Gate 1 (Business Review)** y **Gate 2 (Requirements Review)**, queda **TERMINANTEMENTE PROHIBIDO** definir, preseleccionar o escribir en `.genaryth/state.json` frameworks de frontend, runtimes de backend, ORMs o motores de base de datos específicos.
+> - **Gate 1:** El foco es 100% comercial, dolor del cliente, monetización y naming con identidad real y local (prohibido usar nombres en inglés genéricos salidos de IA; priorizar modismos y jergas con pegada cultural).
+> - **Gate 2:** El foco es 100% historias BDD y reglas de negocio funcionales.
+> Toda definición técnica debe esperar obligatoriamente al **Gate 3 (Architecture Review)** mediante un RFC formal.
 
 > [!IMPORTANT]
 > **DIRECTIVA FINOPS ZERO-COST BOOTSTRAP (POLÍTICA DE COSTO CERO EN MVP):**

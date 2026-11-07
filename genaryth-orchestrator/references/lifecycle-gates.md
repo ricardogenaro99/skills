@@ -19,7 +19,7 @@
 
 > [!CAUTION]
 > **REGLA DE INMUTABILIDAD DE FASES (NO TECHNICAL COMMITMENT IN GATE 1):**
-> Queda **TERMINANTEMENTE PROHIBIDO** definir o escribir en `state.json` frameworks de frontend, runtimes de backend, ORMs o bases de datos en esta fase. El foco es 100% oportunidad comercial, viabilidad de mercado y dolor del cliente.
+> Queda **TERMINANTEMENTE PROHIBIDO** definir o escribir en `state.json` frameworks de frontend, runtimes de backend, ORMs o bases de datos en esta fase. El foco es 100% oportunidad comercial, viabilidad de mercado, dolor del cliente, monetización y naming con identidad real y local (prohibido usar nombres en inglés genéricos salidos de IA; priorizar modismos y jergas con pegada cultural).
 
 ---
 
@@ -33,6 +33,7 @@
   - Criterios de Aceptación bajo sintaxis BDD (*Given-When-Then*).
   - Reglas de negocio explícitas y casos límite (edge cases, errores, excepciones).
   - Requerimientos no funcionales (SLAs de latencia, seguridad, rendimiento, navegadores).
+  - Identidad contextual/peruana y tono funcional con pegada de usuario real.
   - Alcance explícitamente incluido y excluido (In-Scope vs. Out-of-Scope).
 * **Pregunta de Decisión al Tech Lead:** *¿Se aprueban los requerimientos funcionales y criterios de aceptación para proceder con el diseño de arquitectura y contratos?*
 * **Condición de Bloqueo:** PROHIBIDO modelar bases de datos ni endpoints si Gate 2 no está en estado `APPROVED`.
