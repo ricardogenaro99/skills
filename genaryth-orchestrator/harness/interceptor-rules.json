@@ -7,7 +7,9 @@
     "block_destructive_commands": true,
     "enforce_surgical_staging": true,
     "enforce_push_safeguard": true,
-    "enforce_hands_off_code_orchestrator": true
+    "enforce_hands_off_code_orchestrator": true,
+    "enforce_project_scoped_concurrency": true,
+    "enforce_token_budget_conciseness": true
   },
   "forbidden_global_patterns": [
     {

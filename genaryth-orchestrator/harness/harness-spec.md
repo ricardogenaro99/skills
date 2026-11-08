@@ -10,6 +10,7 @@ El Execution Harness resuelve esto mediante 4 pilares tecnológicos:
 2. **Tool Sandbox Matrix:** Matriz de permisos y accesos por rol y frontera de directorio (*Scope Boundaries*).
 3. **Policy Interceptor:** Interceptor estricto en tiempo de ejecución que frena comandos prohibidos.
 4. **State Synchronizer:** Persistencia y trazabilidad automática hacia `.genaryth/state.json`.
+5. **Token-Budget & Conciseness Guard:** Blindaje contra verbosidad innecesaria y context bloating en reportes operativos.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -64,9 +65,13 @@ El motor de poda aplica **Inyección Quirúrgica** basada en el rol del subagent
    * **Scope Específico:** Únicamente los árboles de directorios autorizados en el *Subagent Briefing Contract*.
    * **Ficha del Ticket Activo:** Descripción BDD del ticket, criterios de aceptación y dependencias inmediatas.
    * **Heurísticas Previas Filtradas:** Máximo 3 a 5 lecciones aprendidas relevantes desde `.genaryth/learnings.json` correspondientes al dominio del subagente.
+   * **Project-Scoped Concurrency Key:** Incorporación explícita de `project_id` en el contrato para evitar bloqueos globales entre proyectos distintos.
 2. **Filtros de Exclusión Inviolables:**
    * Archivos y carpetas ignorados por defecto: `node_modules/`, `.git/`, `.next/`, `dist/`, `build/`, `cdk.out/`, `.turbo/`, `coverage/`, logs (`*.log`), archivos de lock (`pnpm-lock.yaml`, `package-lock.json`).
    * Prohibición de dumps masivos de terminal: Los logs de ejecución de pruebas o compilación deben truncarse reportando solo los errores de compilación (`stderr`) y el resumen final.
+3. **Token-Budget Policy en Respuestas:**
+   * Confirmaciones técnicas: 1 a 3 líneas con datos duros (archivos, Exit Code, SHA).
+   * Tablas y diagnósticos extensos: Solo bajo solicitud expresa o en Gateways bloqueantes (Gate 2/3).
 
 ---
 
