@@ -43,6 +43,7 @@ Para garantizar trabajo concurrente seguro sin interferir con otros hilos de tra
 * **Directorio Raíz Autorizado:** `{{AUTHORIZED_SCOPE_PATH}}`
 * **Archivos / Módulos Permitidos para Edición:**
 {{AUTHORIZED_FILES_OR_PATTERNS}}
+* **Project ID:** `{{PROJECT_ID}}`
 * 🚫 **LÍMITE ESTRICTO:** Está TERMINANTEMENTE PROHIBIDO crear, modificar o eliminar archivos fuera de las rutas autorizadas arriba. Si requieres un cambio en contratos compartidos (`packages/common/`) o en otro módulo, debes reportarlo como bloqueo al Orquestador.
 
 ---

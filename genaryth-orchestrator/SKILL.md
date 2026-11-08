@@ -163,7 +163,8 @@ flowchart TD
    - Antes de lanzar subagentes en paralelo con `invoke_subagent`, el Orchestrator DEBE validar dos condiciones obligatorias:
      - **Herramientas de Escritura:** Los subagentes ejecutores deben contar con `EnableWriteTools: true` explícito en su configuración.
      - **No-Solapamiento Estricto de Scopes (Disjoint Commit Scopes):** Los archivos y directorios delimitados en `authorized_scope` deben ser completamente disjuntos (ej. `apps/web/src/components/**` vs `apps/api/src/modules/**`).
-     - 🛑 **Freno Secuencial:** Si existe intersección o concurrencia sobre módulos compartidos (`packages/common/**`, schemas, o `package.json`), el paralelismo queda **PROHIBIDO** y el despacho debe ejecutarse estrictamente en modo **secuencial** para blindar el staging quirúrgico de ADR-007.
+     - 🛑 **Freno Secuencial:** Si existe intersección o concurrencia sobre módulos compartidos (`packages/common/**`, schemas, o `package.json`) **dentro del mismo `project_id`**, el paralelismo queda **PROHIBIDO** y el despacho debe ejecutarse estrictamente en modo **secuencial** para blindar el staging quirúrgico de ADR-007.  
+- 📌 **Concurrente Permitido por Proyecto:** Cuando dos sub‑agentes del mismo tipo operan bajo diferentes `project_id`s, aunque sus `authorized_scope` se solapen, se permite la ejecución paralela.
 
 ---
 
