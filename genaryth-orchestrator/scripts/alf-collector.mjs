@@ -8,24 +8,41 @@
  * y emite un informe estructurado para que ShelBot lo notifique por WhatsApp.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { resolve, join, relative } from 'node:path';
 
 const GITHUB_ROOT = resolve(process.env.HOME || '', 'Documents/GitHub/ricardogenaro99');
 
-const REPOS = [
-  'skills',
-  'kinpet',
-  'genaryth',
-  'sprintflow',
-  'repos-templates/aws-cdk-nestjs-archetype-template',
-  'cli-scaffolder'
-];
+function discoverGenarythRepos(baseDir, depth = 0, maxDepth = 2) {
+  const repos = [];
+  if (!existsSync(baseDir) || depth > maxDepth) return repos;
+
+  try {
+    const entries = readdirSync(baseDir, { withFileTypes: true });
+    const hasGenaryth = entries.some(e => e.isDirectory() && e.name === '.genaryth');
+
+    if (hasGenaryth && depth > 0) {
+      repos.push(relative(GITHUB_ROOT, baseDir));
+    }
+
+    // Continuar explorando subdirectorios (ej. repos-templates/) si no es .git o node_modules
+    for (const entry of entries) {
+      if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+        repos.push(...discoverGenarythRepos(join(baseDir, entry.name), depth + 1, maxDepth));
+      }
+    }
+  } catch (err) {
+    // Manejo silencioso de permisos o directorios inaccesibles
+  }
+
+  return repos;
+}
 
 function collectLearnings() {
   const collected = [];
+  const repos = discoverGenarythRepos(GITHUB_ROOT);
 
-  for (const repo of REPOS) {
+  for (const repo of repos) {
     const learningsPath = join(GITHUB_ROOT, repo, '.genaryth/learnings.json');
     if (existsSync(learningsPath)) {
       try {
@@ -33,7 +50,7 @@ function collectLearnings() {
         const data = JSON.parse(raw);
         if (data && Array.isArray(data.heuristics)) {
           collected.push({
-            project: repo.split('/').pop(),
+            project: repo,
             count: data.heuristics.length,
             heuristics: data.heuristics
           });
