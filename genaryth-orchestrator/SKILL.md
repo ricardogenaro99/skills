@@ -127,7 +127,7 @@ En todo proyecto de Genaryth, `GEMINI.md` es el archivo canónico físico maestr
 ---
 
 ## 🧠 8. Aprendizaje Continuo (Protocolo ALF) & Persistencia Layer 3
-1. **Pre-Flight:** Inyectar lecciones relevantes desde `.genaryth/learnings.json` y Obsidian `mistakes.md`.
+1. **Pre-Flight (Poda de Heurísticas):** Inyectar en el contrato EXCLUSIVAMENTE 2 o 3 heurísticas filtradas por el `area` del subagente (ej. `area: backend`). Prohibido inyectar el archivo de aprendizajes entero.
 2. **In-Flight:** Subagente documenta fricciones técnicas no triviales.
 3. **Debriefing:** Subagente retorna Commit SHA + Learning Log.
 4. **Post-Flight:** Orchestrator persiste en `.genaryth/learnings.json` (`PROJECT_LOCAL`) y Obsidian `mistakes.md` (`ENTERPRISE_GLOBAL`).

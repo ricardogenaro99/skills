@@ -26,8 +26,9 @@ Ejecutar antes de comitear y verificar salida limpia sin errores ni warnings:
 {{QUALITY_GATE_COMMANDS}}
 ```
 
-## 4. Heurísticas & Lecciones Previas
+## 4. Heurísticas & Lecciones Previas (Filtradas por Área)
 {{PREVIOUS_LEARNINGS_AND_HEURISTICS}}
+*(Nota para el Orchestrator: Inyectar exclusivamente las 2-3 heurísticas con `area == "{{SUBAGENT_AREA}}"`. Prohibido inyectar el catálogo completo de aprendizajes).*
 
 ## 5. Protocolo Git ADR-007 (Staging Quirúrgico & Commit Local)
 1. **Staging Explícito:** `git add {{EXPLICIT_STAGING_PATHS_EXAMPLE}}` (Prohibido `git add .` o `-A`).
